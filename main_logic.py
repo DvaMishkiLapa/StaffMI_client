@@ -21,8 +21,6 @@ class pemi_window(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.new_inproject.clicked.connect(self.new_inproject_click)
         self.del_inproject.clicked.connect(self.del_inproject_click)
 
-        self.last_window = None
-
     # [-_-]
     def add_worker_click(self):
         self.destroy()
@@ -52,25 +50,20 @@ class login_stack_window(QtWidgets.QDialog, login_stack.Ui_login_dialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.last_window = None
 
-        data = {}
         try:
-            f = open('memory.json', 'r')
-            data = json.loads(f.read())
-            f.close()
+            with open('memory.json') as f:
+                self.data = json.load(f)
         except IOError:
-            data = {'user_info':{'login': '', 'pwd': ''}, 'flag': False}
-            f = open('memory.json', 'w')
-            f.write(json.dumps(data))
-            f.close()
+            self.data = {'user_info':{'login': '', 'pwd': ''}, 'flag': False}
+            with open('memory.json', 'w') as f:
+                f.write(json.dumps(self.data))
 
         # page_login(0) buttons events and data logic
-        self.check_save_loginpwd.setChecked(bool(data['flag']))
-        self.user, self.pwd = dict.values(data['user_info'])
-        if self.user or self.pwd:
-            self.input_login.setText(self.user)
-            self.input_pwd.setText(self.pwd)
+        self.check_save_loginpwd.setChecked(bool(self.data['flag']))
+        self.user, self.pwd = self.data['user_info'].values()
+        self.input_login.setText(self.user)
+        self.input_pwd.setText(self.pwd)
         self.login_button.clicked.connect(self.login_button_click)
         self.newlogin_button.clicked.connect(self.newlogin_button_click)
         self.newpwd_button.clicked.connect(self.newpwd_button_click)
@@ -87,23 +80,20 @@ class login_stack_window(QtWidgets.QDialog, login_stack.Ui_login_dialog):
     def login_button_click(self):
         flag = self.check_save_loginpwd.isChecked()
         input_login_text = self.input_login.text()
-        if input_login_text == 'server_resp' or not input_login_text: #Для ответа от сервара
+        if input_login_text == 'server_resp' or not input_login_text: # Для ответа от сервера
             self.error_loginpwd.setText('Неверный логин или пароль')
         elif flag:
-            f = open('memory.json', 'w')
             self.user = self.input_login.text()
             self.pwd = self.input_pwd.text()
-            f.write(json.dumps({'user_info':{'login': self.user, 'pwd': self.pwd}, 'flag': flag}))
-            f.close()
-            # self.last_window.setVisible(True)
+            with open('memory.json', 'w') as f:
+                f.write(json.dumps({'user_info':{'login': self.user, 'pwd': self.pwd}, 'flag': flag}))
             self.destroy()
             self.pemi_window = pemi_window()
             self.pemi_window.last_window = self
             self.pemi_window.show()
         else:
-            f = open('memory.json', 'w')
-            f.write(json.dumps({'user_info': {'login': '', 'pwd': ''}, 'flag': False}))
-            f.close()
+            with open('memory.json', 'w') as f:
+                f.write(json.dumps({'user_info': {'login': '', 'pwd': ''}, 'flag': False}))
             self.destroy()
             self.pemi_window = pemi_window()
             self.pemi_window.last_window = self
