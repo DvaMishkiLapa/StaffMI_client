@@ -94,6 +94,8 @@ class login_stack_window(QtWidgets.QDialog, login_stack.Ui_login_dialog):
         else:
             with open('memory.json', 'w') as f:
                 f.write(json.dumps({'user_info': {'login': '', 'pwd': ''}, 'flag': False}))
+            self.input_login.setText('')
+            self.input_pwd.setText('')
             self.destroy()
             self.pemi_window = pemi_window()
             self.pemi_window.last_window = self
