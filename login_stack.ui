@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>C:/Windows/System32/@AppHelpToast.png</normaloff>C:/Windows/System32/@AppHelpToast.png</iconset>
+    <normaloff>icons/title.png</normaloff>icons/title.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">

@@ -3,7 +3,6 @@ import sys
 from PyQt5 import QtWidgets
 import main_window
 import login_stack
-# python -m PyQt5.uic.pyuic -x [FILENAME].ui -o [FILENAME].py
 
 # class responsible for the main window of working with the database
 class pemi_window(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
@@ -15,30 +14,51 @@ class pemi_window(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.add_worker.clicked.connect(self.add_worker_click)
         self.del_worker.clicked.connect(self.del_worker_click)
         self.save_workers.clicked.connect(self.save_workers_click)
-        self.add_project.clicked.connect(self.add_project_click)
-        self.del_project.clicked.connect(self.del_project_click)
-        self.save_projects.clicked.connect(self.save_project_click)
+
         self.new_inproject.clicked.connect(self.new_inproject_click)
         self.del_inproject.clicked.connect(self.del_inproject_click)
+        self.save_inprojects.clicked.connect(self.save_inprojects_click)
+
+        self.add_project.clicked.connect(self.add_project_click)
+        self.del_project.clicked.connect(self.del_project_click)
+        self.save_projects.clicked.connect(self.save_projects_click)
+
+        self.logout.clicked.connect(self.logout_click)
+        self.logout_2.clicked.connect(self.logout_click)
+        self.settings.clicked.connect(self.settings_click)
+        self.settings_2.clicked.connect(self.settings_click)
+        self.update_data.clicked.connect(self.update_data_click)
+        self.update_data_2.clicked.connect(self.update_data_click)
 
     # [-_-]
     def add_worker_click(self):
-        self.destroy()
-        self.last_window.show()
+        print('add_worker_click')
     def del_worker_click(self):
         print('del_worker_click')
     def save_workers_click(self):
         print('save_workers_click')
+
+    def new_inproject_click(self):
+        print('new_inproject_click')
+    def del_inproject_click(self):
+        print('del_inproject_click')
+    def save_inprojects_click(self):
+        print('save_inprojects_click')
+
     def add_project_click(self):
         print('add_project_click')
     def del_project_click(self):
         print('del_project_click')
-    def save_project_click(self):
-        print('save_project_click')
-    def del_inproject_click(self):
-        print('del_inproject_click')
-    def new_inproject_click(self):
-        print('new_inproject_click')
+    def save_projects_click(self):
+        print('save_projects_click')
+
+    def logout_click(self):
+        self.last_window.show()
+        self.destroy()
+    def settings_click(self):
+        print("settings_click")
+    def update_data_click(self):
+        print("update_data_click")
 
     # [X]
     def closeEvent(self, event):
@@ -56,8 +76,8 @@ class login_stack_window(QtWidgets.QDialog, login_stack.Ui_login_dialog):
                 self.data = json.load(f)
         except IOError:
             self.data = {'user_info':{'login': '', 'pwd': ''}, 'flag': False}
-            with open('memory.json', 'w') as f:
-                f.write(json.dumps(self.data))
+            with open('memory.json') as f:
+                self.data = json.load(f)
 
         # page_login(0) buttons events and data logic
         self.check_save_loginpwd.setChecked(bool(self.data['flag']))
