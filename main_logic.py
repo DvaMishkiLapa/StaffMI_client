@@ -3,6 +3,7 @@ import sys
 from PyQt5 import QtWidgets
 import main_window
 import login_stack
+import add_inproject_dialog
 
 # class responsible for the main window of working with the database
 class pemi_window(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
@@ -39,7 +40,13 @@ class pemi_window(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         print('save_workers_click')
 
     def new_inproject_click(self):
-        print('new_inproject_click')
+        chose_dialog = add_inproject_window()
+        chose_dialog.exec_()
+        answer = chose_dialog.answer
+        print(answer)
+        if answer != None:
+            print(answer[0].text())
+
     def del_inproject_click(self):
         print('del_inproject_click')
     def save_inprojects_click(self):
@@ -160,6 +167,25 @@ class login_stack_window(QtWidgets.QDialog, login_stack.Ui_login_dialog):
         event.accept()
         quit()
 
+class add_inproject_window(QtWidgets.QDialog, add_inproject_dialog.Ui_add_inproject_dialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+        self.answer = None
+
+        self.add_button.clicked.connect(self.add_button_click)
+        self.cancel_button.clicked.connect(self.cancel_button_click)
+
+    def add_button_click(self):
+        self.answer = self.listWidget_inproject.selectedItems()
+        self.close()
+
+    def cancel_button_click(self):
+        self.close()
+    
+    def on_listWidget_inproject_itemClicked(self, item):
+        self.add_button.setEnabled(True)
 
 
 def main():
