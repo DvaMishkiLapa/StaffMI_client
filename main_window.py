@@ -78,7 +78,7 @@ class Ui_MainWindow(object):
         self.add_worker.setMaximumSize(QtCore.QSize(60, 16777215))
         self.add_worker.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("icons/seks_icons/add_user.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap("icons/add_user.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.add_worker.setIcon(icon1)
         self.add_worker.setIconSize(QtCore.QSize(45, 45))
         self.add_worker.setCheckable(False)

@@ -189,7 +189,7 @@
               </property>
               <property name="icon">
                <iconset>
-                <normaloff>icons/seks_icons/add_user.png</normaloff>icons/seks_icons/add_user.png</iconset>
+                <normaloff>icons/add_user.png</normaloff>icons/add_user.png</iconset>
               </property>
               <property name="iconSize">
                <size>
