@@ -1,6 +1,7 @@
 import json
 import sys
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import Qt
 import main_window
 import login_stack
 import add_inproject_dialog
@@ -33,9 +34,13 @@ class pemi_window(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
     # [-_-]
     def add_worker_click(self):
-        print('add_worker_click')
+        self.workers_table.insertRow(self.workers_table.rowCount())
+
     def del_worker_click(self):
-        print('del_worker_click')
+        indices = self.workers_table.selectionModel().selectedRows()
+        for index in sorted(indices):
+            self.workers_table.removeRow(index.row())
+
     def save_workers_click(self):
         print('save_workers_click')
 
@@ -53,15 +58,20 @@ class pemi_window(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         print('save_inprojects_click')
 
     def add_project_click(self):
-        print('add_project_click')
+        self.projects_table.insertRow(self.projects_table.rowCount())
+
     def del_project_click(self):
-        print('del_project_click')
+        indices = self.projects_table.selectionModel().selectedRows()
+        for index in sorted(indices):
+            self.projects_table.removeRow(index.row())
+
     def save_projects_click(self):
         print('save_projects_click')
 
     def logout_click(self):
         self.last_window.show()
         self.destroy()
+
     def settings_click(self):
         print("settings_click")
     def update_data_click(self):
@@ -77,6 +87,8 @@ class login_stack_window(QtWidgets.QDialog, login_stack.Ui_login_dialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
 
         try:
             with open('memory.json') as f:
@@ -172,6 +184,7 @@ class add_inproject_window(QtWidgets.QDialog, add_inproject_dialog.Ui_add_inproj
         super().__init__()
         self.setupUi(self)
 
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.answer = None
 
         self.add_button.clicked.connect(self.add_button_click)
