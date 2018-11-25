@@ -43,8 +43,8 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def update_workers(self):
-        for x in range(self.workers_table.rowCount()):
-            self.workers_table.removeRow(0)
+        self.workers_table.clear()
+        self.workers_table.setRowCount(0)
         for worker in self.api.get_all_users():
             row_pos = self.workers_table.rowCount()
             self.workers_table.insertRow(row_pos)
@@ -55,6 +55,8 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def update_projects(self):
+        self.projects_table.clear()
+        self.projects_table.setRowCount(0)
         for x in range(self.projects_table.rowCount()):
             self.projects_table.removeRow(0)
         for project in self.api.get_all_projects():
