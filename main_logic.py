@@ -5,12 +5,20 @@ from PyQt5.QtCore import Qt
 import main_window
 import login_stack
 import add_inproject_dialog
+import db_api
+
 
 # class responsible for the main window of working with the database
 class pemi_window(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
-    def __init__(self):
+    def __init__(self, email, pwd):
         super().__init__()
         self.setupUi(self)
+
+        self.api = db_api.API()
+        self.api.authorization(email, pwd)
+
+        self.update_workers()
+        self.update_projects()
 
         # buttons events
         self.add_worker.clicked.connect(self.add_worker_click)
@@ -32,55 +40,118 @@ class pemi_window(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.update_data.clicked.connect(self.update_data_click)
         self.update_data_2.clicked.connect(self.update_data_click)
 
-    # [-_-]
+
+    def update_workers(self):
+        for x in range(self.workers_table.rowCount()):
+            self.workers_table.removeRow(0)
+        for worker in self.api.get_all_users():
+            row_pos = self.workers_table.rowCount()
+            self.workers_table.insertRow(row_pos)
+            self.workers_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(worker['email']))
+            for x in range(0, 3):
+                self.workers_table.setItem(row_pos, x, QtWidgets.QTableWidgetItem(worker['name'][x]))
+            # self.workers_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(worker['name'][0]))
+            # self.workers_table.setItem(row_pos, 2, QtWidgets.QTableWidgetItem(worker['name'][1]))
+            # self.workers_table.setItem(row_pos, 3, QtWidgets.QTableWidgetItem(worker['name'][2]))
+            self.workers_table.setItem(row_pos, 4, QtWidgets.QTableWidgetItem(worker['position']))
+
+
+    def update_projects(self):
+        for x in range(self.projects_table.rowCount()):
+            self.projects_table.removeRow(0)
+        for project in self.api.get_all_projects():
+            row_pos = self.projects_table.rowCount()
+            self.projects_table.insertRow(row_pos)
+            self.projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(project['name']))
+            self.projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(project['deadline']))
+
+
     def add_worker_click(self):
         self.workers_table.insertRow(self.workers_table.rowCount())
 
+
     def del_worker_click(self):
-        indices = self.workers_table.selectionModel().selectedRows()
-        for index in sorted(indices):
-            self.workers_table.removeRow(index.row())
+        selected_row = sorted(self.workers_table.selectionModel().selectedRows())
+        while len(selected_row):
+            self.workers_table.removeRow(selected_row[-1].row())
+            selected_row.pop()
+
 
     def save_workers_click(self):
         print('save_workers_click')
+        # row_pos = self.workers_table.rowCount() - 1
+        # data = []
+        # for row in range(row_pos):
+        #     data.append([])
+        #     for col in range(5):
+        #         try:
+        #             data[-1].append(self.workers_table.item(row, col).text())
+        #         except AttributeError:
+        #             pass
+
+        # data2 = [{'email': x[0], 'pwd': '1', 'name': [x[1], x[2], x[3]], 'position': x[4]} for x in data]
+        # data3 = data2[:40] + data2[len(data2) - 20:]
+        # for i in range(0, len(data3), 20):
+        #     # self.api.add_users(data3[i: i + 20])
+        #     self.api.edit_users(data3[i: i + 20])
+        # print('Good')
+
 
     def new_inproject_click(self):
-        chose_dialog = add_inproject_window()
+        chose_dialog = add_inproject_window(self.api.get_all_projects())
         chose_dialog.exec_()
         answer = chose_dialog.answer
-        print(answer)
         if answer != None:
-            print(answer[0].text())
+            row_pos = self.current_projects_table.rowCount()
+            self.current_projects_table.insertRow(row_pos)
+            self.current_projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(answer[0]))
+            self.current_projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(answer[1]))
+
 
     def del_inproject_click(self):
-        print('del_inproject_click')
+        selected_row = self.current_projects_table.selectionModel().selectedRows()
+        while len(selected_row):
+            self.current_projects_table.removeRow(selected_row[-1].row())
+            selected_row.pop()
+
+
     def save_inprojects_click(self):
         print('save_inprojects_click')
+
 
     def add_project_click(self):
         self.projects_table.insertRow(self.projects_table.rowCount())
 
+
     def del_project_click(self):
-        indices = self.projects_table.selectionModel().selectedRows()
-        for index in sorted(indices):
-            self.projects_table.removeRow(index.row())
+        selected_row = self.projects_table.selectionModel().selectedRows()
+        while len(selected_row):
+            self.projects_table.removeRow(selected_row[-1].row())
+            selected_row.pop()
+
 
     def save_projects_click(self):
         print('save_projects_click')
+
 
     def logout_click(self):
         self.last_window.show()
         self.destroy()
 
+
     def settings_click(self):
         print("settings_click")
+
+
     def update_data_click(self):
-        print("update_data_click")
+        self.update_workers()
+        self.update_projects()
 
     # [X]
     def closeEvent(self, event):
         event.accept()
         quit()
+
 
 # class responsible for the stack window
 class login_stack_window(QtWidgets.QDialog, login_stack.Ui_login_dialog):
@@ -127,7 +198,7 @@ class login_stack_window(QtWidgets.QDialog, login_stack.Ui_login_dialog):
             with open('memory.json', 'w') as f:
                 f.write(json.dumps({'user_info':{'login': self.user, 'pwd': self.pwd}, 'flag': flag}))
             self.destroy()
-            self.pemi_window = pemi_window()
+            self.pemi_window = pemi_window(self.user, self.pwd)
             self.pemi_window.last_window = self
             self.pemi_window.show()
         else:
@@ -136,7 +207,7 @@ class login_stack_window(QtWidgets.QDialog, login_stack.Ui_login_dialog):
             self.input_login.setText('')
             self.input_pwd.setText('')
             self.destroy()
-            self.pemi_window = pemi_window()
+            self.pemi_window = pemi_window(self.user, self.pwd)
             self.pemi_window.last_window = self
             self.pemi_window.show()
 
@@ -179,25 +250,35 @@ class login_stack_window(QtWidgets.QDialog, login_stack.Ui_login_dialog):
         event.accept()
         quit()
 
+
+
 class add_inproject_window(QtWidgets.QDialog, add_inproject_dialog.Ui_add_inproject_dialog):
-    def __init__(self):
+    def __init__(self, list_projects):
         super().__init__()
         self.setupUi(self)
 
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.answer = None
-
         self.add_button.clicked.connect(self.add_button_click)
         self.cancel_button.clicked.connect(self.cancel_button_click)
 
+        for project in list_projects:
+            row_pos = self.table_projects.rowCount()
+            self.table_projects.insertRow(row_pos)
+            self.table_projects.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(project['name']))
+            self.table_projects.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(project['deadline']))
+
+
     def add_button_click(self):
-        self.answer = self.listWidget_inproject.selectedItems()
+        self.answer = self.table_projects.selectedItems()
         self.close()
+
 
     def cancel_button_click(self):
         self.close()
-    
-    def on_listWidget_inproject_itemClicked(self, item):
+
+
+    def on_table_projects_itemClicked(self, item):
         self.add_button.setEnabled(True)
 
 
@@ -206,6 +287,5 @@ def main():
     login_window = login_stack_window()
     login_window.show()
     app.exec_()
-
 if __name__ == '__main__':
     main()
