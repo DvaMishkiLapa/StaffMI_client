@@ -2,6 +2,7 @@ import json
 import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
+
 import main_window
 import login_stack
 import add_inproject_dialog
@@ -9,7 +10,7 @@ import db_api
 
 
 # class responsible for the main window of working with the database
-class pemi_window(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
+class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def __init__(self, email, pwd):
         super().__init__()
         self.setupUi(self)
@@ -50,9 +51,6 @@ class pemi_window(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             self.workers_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(worker['email']))
             for x in range(0, 3):
                 self.workers_table.setItem(row_pos, x, QtWidgets.QTableWidgetItem(worker['name'][x]))
-            # self.workers_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(worker['name'][0]))
-            # self.workers_table.setItem(row_pos, 2, QtWidgets.QTableWidgetItem(worker['name'][1]))
-            # self.workers_table.setItem(row_pos, 3, QtWidgets.QTableWidgetItem(worker['name'][2]))
             self.workers_table.setItem(row_pos, 4, QtWidgets.QTableWidgetItem(worker['position']))
 
 
@@ -98,7 +96,7 @@ class pemi_window(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def new_inproject_click(self):
-        chose_dialog = add_inproject_window(self.api.get_all_projects())
+        chose_dialog = inprojectDialogWindow(self.api.get_all_projects())
         chose_dialog.exec_()
         answer = chose_dialog.answer
         if answer != None:
@@ -154,7 +152,7 @@ class pemi_window(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
 # class responsible for the stack window
-class login_stack_window(QtWidgets.QDialog, login_stack.Ui_login_dialog):
+class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -198,18 +196,18 @@ class login_stack_window(QtWidgets.QDialog, login_stack.Ui_login_dialog):
             with open('memory.json', 'w') as f:
                 f.write(json.dumps({'user_info':{'login': self.user, 'pwd': self.pwd}, 'flag': flag}))
             self.destroy()
-            self.pemi_window = pemi_window(self.user, self.pwd)
-            self.pemi_window.last_window = self
-            self.pemi_window.show()
+            self.pemiWindow = pemiWindow(self.user, self.pwd)
+            self.pemiWindow.last_window = self
+            self.pemiWindow.show()
         else:
             with open('memory.json', 'w') as f:
                 f.write(json.dumps({'user_info': {'login': '', 'pwd': ''}, 'flag': False}))
             self.input_login.setText('')
             self.input_pwd.setText('')
             self.destroy()
-            self.pemi_window = pemi_window(self.user, self.pwd)
-            self.pemi_window.last_window = self
-            self.pemi_window.show()
+            self.pemiWindow = pemiWindow(self.user, self.pwd)
+            self.pemiWindow.last_window = self
+            self.pemiWindow.show()
 
     # page_login(0) go to the user password change window
     def newlogin_button_click(self):
@@ -252,7 +250,7 @@ class login_stack_window(QtWidgets.QDialog, login_stack.Ui_login_dialog):
 
 
 
-class add_inproject_window(QtWidgets.QDialog, add_inproject_dialog.Ui_add_inproject_dialog):
+class inprojectDialogWindow(QtWidgets.QDialog, add_inproject_dialog.Ui_add_inproject_dialog):
     def __init__(self, list_projects):
         super().__init__()
         self.setupUi(self)
@@ -284,8 +282,9 @@ class add_inproject_window(QtWidgets.QDialog, add_inproject_dialog.Ui_add_inproj
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    login_window = login_stack_window()
+    login_window = loginStackWindow()
     login_window.show()
     app.exec_()
+
 if __name__ == '__main__':
     main()
