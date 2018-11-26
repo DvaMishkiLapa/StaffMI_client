@@ -61,8 +61,6 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def update_projects(self):
         self.projects_table.clearContents()
         self.projects_table.setRowCount(0)
-        for x in range(self.projects_table.rowCount()):
-            self.projects_table.removeRow(0)
         for project in self.api.get_all_projects():
             row_pos = self.projects_table.rowCount()
             self.projects_table.insertRow(row_pos)
