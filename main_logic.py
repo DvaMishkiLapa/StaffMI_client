@@ -6,6 +6,7 @@ from PyQt5.QtCore import Qt
 import main_window
 import login_stack
 import add_inproject_dialog
+import add_new_user_dialog
 import db_api
 
 
@@ -23,14 +24,17 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
         # buttons events
         self.add_worker.clicked.connect(self.add_worker_click)
+        # self.add_worker.clicked.connect(self.workers_table.scrollToBottom)
         self.del_worker.clicked.connect(self.del_worker_click)
         self.save_workers.clicked.connect(self.save_workers_click)
 
         self.new_inproject.clicked.connect(self.new_inproject_click)
+        self.new_inproject.clicked.connect(self.current_projects_table.scrollToBottom)
         self.del_inproject.clicked.connect(self.del_inproject_click)
         self.save_inprojects.clicked.connect(self.save_inprojects_click)
 
         self.add_project.clicked.connect(self.add_project_click)
+        self.add_project.clicked.connect(self.projects_table.scrollToBottom)
         self.del_project.clicked.connect(self.del_project_click)
         self.save_projects.clicked.connect(self.save_projects_click)
 
@@ -43,7 +47,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def update_workers(self):
-        self.workers_table.clear()
+        self.workers_table.clearContents()
         self.workers_table.setRowCount(0)
         for worker in self.api.get_all_users():
             row_pos = self.workers_table.rowCount()
@@ -55,7 +59,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def update_projects(self):
-        self.projects_table.clear()
+        self.projects_table.clearContents()
         self.projects_table.setRowCount(0)
         for x in range(self.projects_table.rowCount()):
             self.projects_table.removeRow(0)
@@ -67,7 +71,8 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def add_worker_click(self):
-        self.workers_table.insertRow(self.workers_table.rowCount())
+        chose_dialog = newUsertDialogWindow()
+        chose_dialog.exec_()
 
 
     def del_worker_click(self):
@@ -280,6 +285,26 @@ class inprojectDialogWindow(QtWidgets.QDialog, add_inproject_dialog.Ui_add_inpro
 
     def on_table_projects_itemClicked(self, item):
         self.add_button.setEnabled(True)
+
+
+
+class newUsertDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user_dialog):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.add_button.clicked.connect(self.add_button_click)
+        self.cancel_button.clicked.connect(self.cancel_button_click)
+
+
+    def add_button_click(self):
+        self.close()
+
+
+    def cancel_button_click(self):
+        self.close()
+
 
 
 def main():
