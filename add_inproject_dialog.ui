@@ -108,6 +108,11 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>table_projects</tabstop>
+  <tabstop>add_button</tabstop>
+  <tabstop>cancel_button</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

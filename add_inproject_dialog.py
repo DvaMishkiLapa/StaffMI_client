@@ -57,6 +57,8 @@ class Ui_add_inproject_dialog(object):
 
         self.retranslateUi(add_inproject_dialog)
         QtCore.QMetaObject.connectSlotsByName(add_inproject_dialog)
+        add_inproject_dialog.setTabOrder(self.table_projects, self.add_button)
+        add_inproject_dialog.setTabOrder(self.add_button, self.cancel_button)
 
     def retranslateUi(self, add_inproject_dialog):
         _translate = QtCore.QCoreApplication.translate

@@ -31,6 +31,10 @@
   <property name="windowTitle">
    <string>Добавление пользователя</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>icons/title.png</normaloff>icons/title.png</iconset>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="2">
     <widget class="QPushButton" name="cancel_button">
@@ -242,6 +246,17 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lineEdit_email</tabstop>
+  <tabstop>lineEdit_surname</tabstop>
+  <tabstop>lineEdit_name</tabstop>
+  <tabstop>lineEdit_patron</tabstop>
+  <tabstop>lineEdit_pos</tabstop>
+  <tabstop>lineEdit_pwd</tabstop>
+  <tabstop>lineEdit_confpwd</tabstop>
+  <tabstop>add_button</tabstop>
+  <tabstop>cancel_button</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

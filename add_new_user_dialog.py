@@ -19,6 +19,9 @@ class Ui_add_new_user_dialog(object):
         add_new_user_dialog.setSizePolicy(sizePolicy)
         add_new_user_dialog.setMinimumSize(QtCore.QSize(350, 275))
         add_new_user_dialog.setMaximumSize(QtCore.QSize(350, 275))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("icons/title.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        add_new_user_dialog.setWindowIcon(icon)
         self.gridLayout = QtWidgets.QGridLayout(add_new_user_dialog)
         self.gridLayout.setObjectName("gridLayout")
         self.cancel_button = QtWidgets.QPushButton(add_new_user_dialog)
@@ -121,6 +124,14 @@ class Ui_add_new_user_dialog(object):
 
         self.retranslateUi(add_new_user_dialog)
         QtCore.QMetaObject.connectSlotsByName(add_new_user_dialog)
+        add_new_user_dialog.setTabOrder(self.lineEdit_email, self.lineEdit_surname)
+        add_new_user_dialog.setTabOrder(self.lineEdit_surname, self.lineEdit_name)
+        add_new_user_dialog.setTabOrder(self.lineEdit_name, self.lineEdit_patron)
+        add_new_user_dialog.setTabOrder(self.lineEdit_patron, self.lineEdit_pos)
+        add_new_user_dialog.setTabOrder(self.lineEdit_pos, self.lineEdit_pwd)
+        add_new_user_dialog.setTabOrder(self.lineEdit_pwd, self.lineEdit_confpwd)
+        add_new_user_dialog.setTabOrder(self.lineEdit_confpwd, self.add_button)
+        add_new_user_dialog.setTabOrder(self.add_button, self.cancel_button)
 
     def retranslateUi(self, add_new_user_dialog):
         _translate = QtCore.QCoreApplication.translate
