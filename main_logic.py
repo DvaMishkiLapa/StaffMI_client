@@ -24,7 +24,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
         # buttons events
         self.add_worker.clicked.connect(self.add_worker_click)
-        # self.add_worker.clicked.connect(self.workers_table.scrollToBottom)
+        self.add_worker.clicked.connect(self.workers_table.scrollToBottom)
         self.del_worker.clicked.connect(self.del_worker_click)
         self.save_workers.clicked.connect(self.save_workers_click)
 
@@ -53,8 +53,8 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             row_pos = self.workers_table.rowCount()
             self.workers_table.insertRow(row_pos)
             self.workers_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(worker['email']))
-            for x in range(0, 3):
-                self.workers_table.setItem(row_pos, x, QtWidgets.QTableWidgetItem(worker['name'][x]))
+            for x in range(1, 4):
+                self.workers_table.setItem(row_pos, x, QtWidgets.QTableWidgetItem(worker['name'][x-1]))
             self.workers_table.setItem(row_pos, 4, QtWidgets.QTableWidgetItem(worker['position']))
 
 
@@ -69,7 +69,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def add_worker_click(self):
-        chose_dialog = newUsertDialogWindow()
+        chose_dialog = newUsertDialogWindow(self.api)
         chose_dialog.exec_()
 
 
@@ -287,17 +287,40 @@ class inprojectDialogWindow(QtWidgets.QDialog, add_inproject_dialog.Ui_add_inpro
 
 
 class newUsertDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user_dialog):
-    def __init__(self):
+    def __init__(self, api):
         super().__init__()
         self.setupUi(self)
-
+        self.api = api
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.add_button.clicked.connect(self.add_button_click)
         self.cancel_button.clicked.connect(self.cancel_button_click)
 
 
     def add_button_click(self):
-        self.close()
+        email = self.lineEdit_email.text()
+        surname = self.lineEdit_surname.text()
+        name = self.lineEdit_name.text()
+        patron = self.lineEdit_patron.text()
+        pos = self.lineEdit_pos.text()
+        pwd = self.lineEdit_pwd.text()
+        confpwd = self.lineEdit_confpwd.text()
+        if email and name and surname and patron and pos and pwd and confpwd:
+            if pwd == confpwd:
+                data = [{'email': email, 'pwd': pwd, 'name': [surname, name, patron], 'position': pos}]
+                answer = self.api.add_users(data)
+                if answer['ok']:
+                    if answer['content']['add_users'][0]['content'] == 'User already exist!':
+                        self.label_error.setText('Пользователь с таким Email уже существует!')
+                        return
+                else:
+                    if answer['content'][-16:] == "is not a 'email'":
+                        self.label_error.setText('Неверный вид Email!')
+                        return
+                self.close()
+            else:
+                self.label_error.setText('Пароли не совпадают!')
+        else:
+            self.label_error.setText('Заполнены не все поля!')
 
 
     def cancel_button_click(self):
