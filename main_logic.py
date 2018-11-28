@@ -138,8 +138,12 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def logout_click(self):
-        self.last_window.show()
+        self.workers_table.clear()
+        self.projects_table.clear()
+        self.current_projects_table.clear()
         self.destroy()
+        self.last_window.show()
+
 
 
     def settings_click(self):
