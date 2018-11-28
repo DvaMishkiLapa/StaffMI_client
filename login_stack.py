@@ -88,6 +88,8 @@ class Ui_login_dialog(object):
         sizePolicy.setHeightForWidth(self.error_loginpwd.sizePolicy().hasHeightForWidth())
         self.error_loginpwd.setSizePolicy(sizePolicy)
         self.error_loginpwd.setLayoutDirection(QtCore.Qt.LeftToRight)
+        self.error_loginpwd.setStyleSheet("color: rgb(255, 0, 0);\n"
+"font-weight: bold;")
         self.error_loginpwd.setText("")
         self.error_loginpwd.setAlignment(QtCore.Qt.AlignCenter)
         self.error_loginpwd.setObjectName("error_loginpwd")

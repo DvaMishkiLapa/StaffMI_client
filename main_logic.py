@@ -12,12 +12,11 @@ import db_api
 
 # class responsible for the main window of working with the database
 class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
-    def __init__(self, email, pwd):
+    def __init__(self, api):
         super().__init__()
         self.setupUi(self)
 
-        self.api = db_api.API()
-        self.api.authorization(email, pwd)
+        self.api = api
 
         self.update_workers()
         self.update_projects()
@@ -192,17 +191,18 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
 
     # page_login(0) login button
     def login_button_click(self):
+        api = db_api.API()
         flag = self.check_save_loginpwd.isChecked()
         input_login_text = self.input_login.text()
-        if input_login_text == 'server_resp' or not input_login_text: # Для ответа от сервера
-            self.error_loginpwd.setText('Неверный логин или пароль')
+        input_pwd_text = self.input_pwd.text()
+        answer = api.authorization(input_login_text, input_pwd_text)
+        if not answer:
+            self.error_loginpwd.setText('Неверный логин или пароль!')
         elif flag:
-            self.user = self.input_login.text()
-            self.pwd = self.input_pwd.text()
             with open('memory.json', 'w') as f:
-                f.write(json.dumps({'user_info':{'login': self.user, 'pwd': self.pwd}, 'flag': flag}))
+                f.write(json.dumps({'user_info':{'login': input_login_text, 'pwd': input_pwd_text}, 'flag': flag}))
             self.destroy()
-            self.pemiWindow = pemiWindow(self.user, self.pwd)
+            self.pemiWindow = pemiWindow(api)
             self.pemiWindow.last_window = self
             self.pemiWindow.show()
         else:
@@ -211,7 +211,7 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
             self.input_login.setText('')
             self.input_pwd.setText('')
             self.destroy()
-            self.pemiWindow = pemiWindow(self.user, self.pwd)
+            self.pemiWindow = pemiWindow(api)
             self.pemiWindow.last_window = self
             self.pemiWindow.show()
 

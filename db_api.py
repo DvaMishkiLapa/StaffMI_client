@@ -19,6 +19,7 @@ class API:
         data = json.dumps(data)
         response = requests.post(host, data=data)
         self.token = response.json()['content']['authorization']['content']
+        return response.json()['content']['authorization']['ok']
 
 
     def send_query(self, args):
