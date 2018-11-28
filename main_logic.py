@@ -24,7 +24,6 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
         # buttons events
         self.add_worker.clicked.connect(self.add_worker_click)
-        self.add_worker.clicked.connect(self.workers_table.scrollToBottom)
         self.del_worker.clicked.connect(self.del_worker_click)
         self.save_workers.clicked.connect(self.save_workers_click)
 
@@ -71,6 +70,8 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def add_worker_click(self):
         chose_dialog = newUsertDialogWindow(self.api)
         chose_dialog.exec_()
+        self.update_workers()
+        self.workers_table.scrollToBottom()
 
 
     def del_worker_click(self):
@@ -317,10 +318,8 @@ class newUsertDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_use
                         self.label_error.setText('Неверный вид Email!')
                         return
                 self.close()
-            else:
-                self.label_error.setText('Пароли не совпадают!')
-        else:
-            self.label_error.setText('Заполнены не все поля!')
+            else: self.label_error.setText('Пароли не совпадают!')
+        else: self.label_error.setText('Заполнены не все поля!')
 
 
     def cancel_button_click(self):
