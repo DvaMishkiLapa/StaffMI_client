@@ -309,21 +309,20 @@ class newUsertDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_use
         pos = self.lineEdit_pos.text()
         pwd = self.lineEdit_pwd.text()
         confpwd = self.lineEdit_confpwd.text()
-        if email and name and surname and patron and pos and pwd and confpwd:
-            if pwd == confpwd:
-                data = [{'email': email, 'pwd': pwd, 'name': [surname, name, patron], 'position': pos}]
-                answer = self.api.add_users(data)
-                if answer['ok']:
-                    if answer['content']['add_users'][0]['content'] == 'User already exist!':
-                        self.label_error.setText('Пользователь с таким Email уже существует!')
-                        return
-                else:
-                    if answer['content'][-16:] == "is not a 'email'":
-                        self.label_error.setText('Неверный вид Email!')
-                        return
+        if not (email and name and surname and patron and pos and pwd and confpwd):
+            self.label_error.setText('Заполнены не все поля!')
+        elif not (pwd == confpwd):
+            self.label_error.setText('Пароли не совпадают!')
+        else:
+            data = [{'email': email, 'pwd': pwd, 'name': [surname, name, patron], 'position': pos}]
+            answer = self.api.add_users(data)
+            if not answer['ok']:
+                self.label_error.setText('Неверный вид Email!')
+            elif answer['content']['add_users'][0]['ok']:
                 self.close()
-            else: self.label_error.setText('Пароли не совпадают!')
-        else: self.label_error.setText('Заполнены не все поля!')
+            else:
+                self.label_error.setText('Пользователь с таким Email уже существует!')
+
 
 
     def cancel_button_click(self):
