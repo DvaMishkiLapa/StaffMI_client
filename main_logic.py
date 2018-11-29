@@ -165,8 +165,8 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.api = db_api.API()
 
         try:
             with open('memory.json') as f:
@@ -195,18 +195,17 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
 
     # page_login(0) login button
     def login_button_click(self):
-        api = db_api.API()
         flag = self.check_save_loginpwd.isChecked()
         input_login_text = self.input_login.text()
         input_pwd_text = self.input_pwd.text()
-        answer = api.authorization(input_login_text, input_pwd_text)
+        answer = self.api.authorization(input_login_text, input_pwd_text)
         if not answer:
             self.error_loginpwd.setText('Неверный логин или пароль!')
         elif flag:
             with open('memory.json', 'w') as f:
                 f.write(json.dumps({'user_info':{'login': input_login_text, 'pwd': input_pwd_text}, 'flag': flag}))
             self.destroy()
-            self.pemiWindow = pemiWindow(api)
+            self.pemiWindow = pemiWindow(self.api)
             self.pemiWindow.last_window = self
             self.pemiWindow.show()
         else:
@@ -215,7 +214,7 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
             self.input_login.setText('')
             self.input_pwd.setText('')
             self.destroy()
-            self.pemiWindow = pemiWindow(api)
+            self.pemiWindow = pemiWindow(self.api)
             self.pemiWindow.last_window = self
             self.pemiWindow.show()
 
@@ -233,11 +232,11 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
         pwd = self.input_pwd_replogin.text()
         new_login = self.input_newlogin.text()
         if old_login != new_login:
-            response = {'user_unfo': {'login': old_login, 'pwd': pwd}, 'new_login': new_login}
-            print(response)
+            data = [{'user_unfo': {'login': old_login, 'pwd': pwd}, 'new_login': new_login}]
+            # self.api.edit_users(data)
+            print(data)
         else:
-            print('logins match')
-
+            self.error_replog.setText('Новый логин совпадает с текущим!')
     # page_replace_login(2) and page_replace_pwd(2) back button
     def back_login_button_click(self):
         self.login_stack.setCurrentIndex(0) # page_login
@@ -247,11 +246,18 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
         login = self.input_login_reppwd.text()
         old_pwd = self.input_oldpwd.text()
         new_pwd = self.input_newpwd.text()
-        if old_pwd != new_pwd:
-            response = {'user_unfo': {'login': login, 'old_pwd': old_pwd}, 'new_pwd': new_pwd}
-            print(response)
+        answer = self.api.authorization(login, old_pwd)
+        if not answer:
+            self.error_reppwd.setStyleSheet("color: rgb(255, 0, 0);; font-weight: bold;")
+            self.error_reppwd.setText('Неверный логин или пароль!')
+        elif old_pwd != new_pwd:
+            data = [{'email': login, 'pwd': new_pwd, 'name': ['1', '2', '3'], 'position': '4'}]
+            self.api.edit_users(data)
+            self.error_reppwd.setStyleSheet("color: rgb(75, 225, 0);; font-weight: bold;")
+            self.error_reppwd.setText('Пароль успешно изменен')
         else:
-            print('passwords match')
+            self.error_reppwd.setStyleSheet("color: rgb(255, 0, 0);; font-weight: bold;")
+            self.error_reppwd.setText('Новый пароль совпадает с текущим!')
 
     # [X]
     def closeEvent(self, event):
@@ -322,7 +328,6 @@ class newUsertDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_use
                 self.close()
             else:
                 self.label_error.setText('Пользователь с таким Email уже существует!')
-
 
 
     def cancel_button_click(self):
