@@ -1,5 +1,7 @@
 import json
 import sys
+from itertools import groupby
+
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
@@ -19,6 +21,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
         self.api = api
         self.rows_to_delete = []
+        self.rows_were_changed = []
 
         self.update_workers()
         self.update_projects()
@@ -27,6 +30,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.add_worker.clicked.connect(self.add_worker_click)
         self.del_worker.clicked.connect(self.del_worker_click)
         self.save_workers.clicked.connect(self.save_workers_click)
+        self.workers_table.doubleClicked.connect(self.changed_cell)
 
         self.new_inproject.clicked.connect(self.new_inproject_click)
         self.new_inproject.clicked.connect(self.current_projects_table.scrollToBottom)
@@ -88,24 +92,24 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         if self.rows_to_delete:
             self.api.del_users(self.rows_to_delete)
             self.rows_to_delete.clear()
+        if self.rows_were_changed:
+            list_changed_rows = []
+            for obj in self.rows_were_changed:
+                list_changed_rows.append({
+                    'email': obj.sibling(obj.row(), 0).data(), 'pwd': '123456', # We are waiting for password corrections
+                    'name': [obj.sibling(obj.row(), 1).data(), obj.sibling(obj.row(), 2).data(), obj.sibling(obj.row(), 3).data()],
+                    'position': obj.sibling(obj.row(), 4).data()
+                    })
+            self.api.edit_users(list_changed_rows)
+            self.rows_were_changed.clear()
         self.update_workers()
 
-        # row_pos = self.workers_table.rowCount() - 1
-        # data = []
-        # for row in range(row_pos):
-        #     data.append([])
-        #     for col in range(5):
-        #         try:
-        #             data[-1].append(self.workers_table.item(row, col).text())
-        #         except AttributeError:
-        #             pass
 
-        # data2 = [{'email': x[0], 'pwd': '1', 'name': [x[1], x[2], x[3]], 'position': x[4]} for x in data]
-        # data3 = data2[:40] + data2[len(data2) - 20:]
-        # for i in range(0, len(data3), 20):
-        #     # self.api.add_users(data3[i: i + 20])
-        #     self.api.edit_users(data3[i: i + 20])
-        # print('Good')
+    def changed_cell(self):
+        selected_row = self.workers_table.selectedItems()
+        for obj in selected_row:
+            obj.setBackground(QColor(255, 253, 153))
+        self.rows_were_changed.extend(self.workers_table.selectionModel().selectedRows())
 
 
     def new_inproject_click(self):
