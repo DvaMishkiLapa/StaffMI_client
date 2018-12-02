@@ -2,6 +2,7 @@ import json
 import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QColor
 
 import main_window
 import login_stack
@@ -17,6 +18,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.setupUi(self)
 
         self.api = api
+        self.rows_to_delete = []
 
         self.update_workers()
         self.update_projects()
@@ -74,14 +76,20 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def del_worker_click(self):
-        selected_row = sorted(self.workers_table.selectionModel().selectedRows())
-        while len(selected_row):
-            self.workers_table.removeRow(selected_row[-1].row())
-            selected_row.pop()
+        selected_rows = sorted(self.workers_table.selectionModel().selectedRows())
+        for row in selected_rows:
+            self.rows_to_delete.append({'email': row.sibling(row.row(), 0).data()})
+        selected_rows = self.workers_table.selectedItems()
+        for obj in selected_rows:
+            obj.setBackground(QColor(255, 127, 127))
 
 
     def save_workers_click(self):
-        print('save_workers_click')
+        if self.rows_to_delete:
+            self.api.del_users(self.rows_to_delete)
+            self.rows_to_delete.clear()
+        self.update_workers()
+
         # row_pos = self.workers_table.rowCount() - 1
         # data = []
         # for row in range(row_pos):

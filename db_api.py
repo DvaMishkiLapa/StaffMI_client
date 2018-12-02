@@ -58,8 +58,8 @@ class API:
         return self.send_query({"edit_users": users})
 
 
-    # def del_user(self, email):
-    #     return self.send_query({'email': email}, 'del_user')
+    def del_users(self, email):
+        return self.send_query({"del_users": email})
 
 
     # def edit_user(self, email, pwd, surname, name, patronymic, position):
