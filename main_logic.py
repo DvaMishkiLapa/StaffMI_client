@@ -177,10 +177,10 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
                 self.data = json.load(f)
 
         # page_login(0) buttons events and data logic
-        self.check_save_loginpwd.setChecked(bool(self.data['flag']))
-        self.user, self.pwd = self.data['user_info'].values()
-        self.input_login.setText(self.user)
-        self.input_pwd.setText(self.pwd)
+        self.check_save_loginpwd.setChecked(self.data['flag'])
+        self.input_login.setText(self.data['user_info']['login'])
+        self.input_pwd.setText(self.data['user_info']['pwd'])
+
         self.login_button.clicked.connect(self.login_button_click)
         self.newlogin_button.clicked.connect(self.newlogin_button_click)
         self.newpwd_button.clicked.connect(self.newpwd_button_click)
@@ -196,14 +196,14 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
     # page_login(0) login button
     def login_button_click(self):
         flag = self.check_save_loginpwd.isChecked()
-        input_login_text = self.input_login.text()
-        input_pwd_text = self.input_pwd.text()
-        answer = self.api.authorization(input_login_text, input_pwd_text)
+        self.api.user = self.input_login.text()
+        self.api.pwd = self.input_pwd.text()
+        answer = self.api.authorization(self.api.user, self.api.pwd)
         if not answer:
             self.error_loginpwd.setText('Неверный логин или пароль!')
         elif flag:
             with open('memory.json', 'w') as f:
-                f.write(json.dumps({'user_info':{'login': input_login_text, 'pwd': input_pwd_text}, 'flag': flag}))
+                f.write(json.dumps({'user_info':{'login': self.api.user, 'pwd': self.api.pwd}, 'flag': flag}))
             self.destroy()
             self.pemiWindow = pemiWindow(self.api)
             self.pemiWindow.last_window = self

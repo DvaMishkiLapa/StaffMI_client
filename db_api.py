@@ -11,7 +11,9 @@ pwd = '12345679'
 class API:
     def __init__(self):
         self.token = ''
-
+        self.user = ''
+        self.pwd = ''
+# {'ok': False, 'content': 'Token expired!', 'error_code': 403}
 
     def authorization(self, email, pwd):
         args = {"authorization": {"email": email, "pwd": pwd}}
@@ -25,11 +27,15 @@ class API:
     def send_query(self, args):
         data = {"requests": args, 'token': self.token}
         data = json.dumps(data)
-        response = requests.post(host, data=data)
+        response = requests.post(host, data=data).json()
         try:
-            response = response.json()
+            if response['error_code'] == 403:
+                self.authorization(self.user, self.pwd)
+                data = {"requests": args, 'token': self.token}
+                data = json.dumps(data)
+                response = requests.post(host, data=data).json()
         except Exception:
-            print(response.text)
+            pass
         if len(args) == 1:
             if response['ok']:
                 try:
