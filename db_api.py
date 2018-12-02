@@ -13,56 +13,49 @@ class API:
         self.token = ''
         self.user = ''
         self.pwd = ''
-# {'ok': False, 'content': 'Token expired!', 'error_code': 403}
+
 
     def authorization(self, email, pwd):
-        args = {"authorization": {"email": email, "pwd": pwd}}
-        data = {"requests": args, 'token': ''}
-        data = json.dumps(data)
-        response = requests.post(host, data=data)
-        self.token = response.json()['content']['authorization']['content']
-        return response.json()['content']['authorization']['ok']
+        data = json.dumps({"requests": {"authorization": {"email": email, "pwd": pwd}}, 'token': ''})
+        response = requests.post(host, data=data).json()
+        self.token = response['content']['authorization']['content']
+        return response['content']['authorization']['ok']
 
 
     def send_query(self, args):
-        data = {"requests": args, 'token': self.token}
-        data = json.dumps(data)
+        data = json.dumps({"requests": args, 'token': self.token})
         response = requests.post(host, data=data).json()
         try:
             if response['error_code'] == 403:
                 self.authorization(self.user, self.pwd)
-                data = {"requests": args, 'token': self.token}
-                data = json.dumps(data)
+                data = json.dumps({"requests": args, 'token': self.token})
                 response = requests.post(host, data=data).json()
         except Exception:
             pass
-        if len(args) == 1:
-            if response['ok']:
-                try:
-                    return tuple(response['content'].values())[0]['content']
-                except Exception:
-                    pass
+        if not (len(args) == 1):
+            pass
+        elif response['ok']:
+            try:
+                return tuple(response['content'].values())[0]['content']
+            except Exception:
+                pass
         return response
 
 
     def get_all_users(self):
-        args = {"get_all_users": {}}
-        return self.send_query(args)
+        return self.send_query({"get_all_users": {}})
 
 
     def get_all_projects(self):
-        args = {"get_all_projects": {}}
-        return self.send_query(args)
+        return self.send_query({"get_all_projects": {}})
 
 
     def add_users(self, users):
-        args = {"add_users": users}
-        return self.send_query(args)
+        return self.send_query({"add_users": users})
 
 
     def edit_users(self, users):
-        args = {"edit_users": users}
-        return self.send_query(args)
+        return self.send_query({"edit_users": users})
 
 
     # def del_user(self, email):
@@ -74,10 +67,9 @@ class API:
 
 
     def add_project(self, name, deadline):
-        args = {"add_projects": [
+        return self.send_query({"add_projects": [
             {'name': name, 'deadline': deadline}
-        ]}
-        return self.send_query(args)
+        ]})
 
 
     # def edit_project(self, token, name, deadline):
