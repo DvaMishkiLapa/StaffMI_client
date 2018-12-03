@@ -5,10 +5,10 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QColor
 
-from interface import main_window
-from interface import login_stack
-from interface import add_inproject_dialog
-from interface import add_new_user_dialog
+from ui import main_window
+from ui import login_stack
+from ui import add_inproject_dialog
+from ui import add_new_user_dialog
 import db_api
 
 

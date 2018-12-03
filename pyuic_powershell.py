@@ -1,5 +1,5 @@
 import os
-os.system('python -m PyQt5.uic.pyuic -x main_window.ui -o main_window.py')
-os.system('python -m PyQt5.uic.pyuic -x login_stack.ui -o login_stack.py')
-os.system('python -m PyQt5.uic.pyuic -x add_inproject_dialog.ui -o add_inproject_dialog.py')
-os.system('python -m PyQt5.uic.pyuic -x add_new_user_dialog.ui -o add_new_user_dialog.py')
+os.system('python -m PyQt5.uic.pyuic -x .\\ui\\main_window.ui -o .\\ui\\main_window.py')
+os.system('python -m PyQt5.uic.pyuic -x .\\ui\\login_stack.ui -o .\\ui\\login_stack.py')
+os.system('python -m PyQt5.uic.pyuic -x .\\ui\\add_inproject_dialog.ui -o .\\ui\\add_inproject_dialog.py')
+os.system('python -m PyQt5.uic.pyuic -x .\\ui\\add_new_user_dialog.ui -o .\\ui\\add_new_user_dialog.py')
