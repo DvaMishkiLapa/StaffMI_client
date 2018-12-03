@@ -170,11 +170,16 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.worker_rows_to_delete.clear()
         self.worker_rows_were_changed.clear()
         self.new_worker_rows.clear()
-        self.update_workers()
+        row_pos = self.workers_table.rowCount()
+        for x in range(0, row_pos+1):
+            self.workers_table.selectRow(x)
+            row = self.workers_table.selectedItems()
+            for y in row:
+                y.setBackground(QColor(255, 255, 255))
 
 
     def undo_changes_projectstable(self):
-        self.update_projects()
+        print('undo_changes_projectstable')
 
 
     def logout_click(self):
@@ -364,6 +369,10 @@ class newUsertDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_use
 
 
     def add_button_click(self):
+        self.label_error.setText('')
+        if not self.api.ping_server():
+            self.label_error.setText('Сервер не доступен!')
+            return 
         email = self.lineEdit_email.text()
         surname = self.lineEdit_surname.text()
         name = self.lineEdit_name.text()
