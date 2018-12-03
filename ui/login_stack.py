@@ -13,7 +13,7 @@ class Ui_login_dialog(object):
         login_dialog.setObjectName("login_dialog")
         login_dialog.resize(250, 300)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("icons/title.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("ui/icons/title.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         login_dialog.setWindowIcon(icon)
         self.gridLayout = QtWidgets.QGridLayout(login_dialog)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)

@@ -20,7 +20,7 @@ class Ui_add_new_user_dialog(object):
         add_new_user_dialog.setMinimumSize(QtCore.QSize(350, 275))
         add_new_user_dialog.setMaximumSize(QtCore.QSize(350, 275))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("icons/title.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("ui/icons/title.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         add_new_user_dialog.setWindowIcon(icon)
         self.gridLayout = QtWidgets.QGridLayout(add_new_user_dialog)
         self.gridLayout.setObjectName("gridLayout")
