@@ -2,8 +2,11 @@ import sqlite3
 import json
 import urllib.parse
 import requests
+from platform import system as system_name
+from subprocess import call as system_call
 
 host = 'https://pms.kmm-vsu.ru/'
+host_for_ping = 'pms.kmm-vsu.ru'
 email = 'pacan@1337.ru'
 pwd = '12345679'
 
@@ -40,6 +43,12 @@ class API:
             except Exception:
                 pass
         return response
+
+
+    def ping_server(self):
+        param = '-n' if system_name().lower()=='windows' else '-c'
+        command = ['ping', param, '1', host_for_ping]
+        return system_call(command) == 0
 
 
     def get_all_users(self):

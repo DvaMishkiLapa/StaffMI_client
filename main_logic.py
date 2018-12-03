@@ -1,6 +1,5 @@
 import json
 import sys
-from itertools import groupby
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
@@ -22,6 +21,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.api = api
         self.rows_to_delete = []
         self.rows_were_changed = []
+        # self.list_row_wc =[] # Сохранения данных других страниц
 
         self.update_workers()
         self.update_projects()
@@ -51,6 +51,10 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def update_workers(self):
+        self.label_log_main.setText('')
+        if not self.api.ping_server():
+            self.label_log_main.setText('Сервер не доступен!')
+            return 
         self.workers_table.clearContents()
         self.workers_table.setRowCount(0)
         for worker in self.api.get_all_users():
@@ -63,6 +67,10 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def update_projects(self):
+        self.label_log_main.setText('')
+        if not self.api.ping_server():
+            self.label_log_main.setText('Сервер не доступен!')
+            return 
         self.projects_table.clearContents()
         self.projects_table.setRowCount(0)
         for project in self.api.get_all_projects():
@@ -89,6 +97,10 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def save_workers_click(self):
+        self.label_log_main.setText('')
+        if not self.api.ping_server():
+            self.label_log_main.setText('Сервер не доступен!')
+            return 
         if self.rows_to_delete:
             self.api.del_users(self.rows_to_delete)
             self.rows_to_delete.clear()
@@ -157,7 +169,6 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.last_window.show()
 
 
-
     def settings_click(self):
         print("settings_click")
 
@@ -207,6 +218,10 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
 
     # page_login(0) login button
     def login_button_click(self):
+        self.label_log_login.setText('')
+        if not self.api.ping_server():
+            self.label_log_login.setText('Сервер не доступен!')
+            return 
         flag = self.check_save_loginpwd.isChecked()
         self.api.user = self.input_login.text()
         self.api.pwd = self.input_pwd.text()
@@ -240,6 +255,10 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
 
    # page_replace_login(2) button user login changes
     def save_newlogin_button_click(self):
+        self.label_log_replogin.setText('')
+        if not self.api.ping_server():
+            self.label_log_replogin.setText('Сервер не доступен!')
+            return 
         old_login = self.input_oldlogin.text()
         pwd = self.input_pwd_replogin.text()
         new_login = self.input_newlogin.text()
@@ -255,6 +274,10 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
 
     # page_replace_pwd(2) button user pwd changes
     def save_newpwd_button_click(self):
+        self.label_log_reppwd.setText('')
+        if not self.api.ping_server():
+            self.label_log_reppwd.setText('Сервер не доступен!')
+            return 
         login = self.input_login_reppwd.text()
         old_pwd = self.input_oldpwd.text()
         new_pwd = self.input_newpwd.text()
