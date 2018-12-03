@@ -19,8 +19,9 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.setupUi(self)
 
         self.api = api
-        self.rows_to_delete = []
-        self.rows_were_changed = []
+        self.worker_rows_to_delete = []
+        self.worker_rows_were_changed = []
+        self.new_worker_rows = []
         # self.list_row_wc =[] # Сохранения данных других страниц
 
         self.update_workers()
@@ -83,16 +84,15 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def add_worker_click(self):
-        chose_dialog = newUsertDialogWindow(self.api)
+        chose_dialog = newUsertDialogWindow(self.api, self.workers_table, self.new_worker_rows)
         chose_dialog.exec_()
-        self.update_workers()
         self.workers_table.scrollToBottom()
 
 
     def del_worker_click(self):
         selected_rows = sorted(self.workers_table.selectionModel().selectedRows())
         for row in selected_rows:
-            self.rows_to_delete.append({'email': row.sibling(row.row(), 0).data()})
+            self.worker_rows_to_delete.append({'email': row.sibling(row.row(), 0).data()})
         selected_rows = self.workers_table.selectedItems()
         for obj in selected_rows:
             obj.setBackground(QColor(255, 127, 127))
@@ -103,19 +103,22 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         if not self.api.ping_server():
             self.label_log_main.setText('Сервер не доступен!')
             return 
-        if self.rows_to_delete:
-            self.api.del_users(self.rows_to_delete)
-            self.rows_to_delete.clear()
-        if self.rows_were_changed:
+        if self.worker_rows_to_delete:
+            self.api.del_users(self.worker_rows_to_delete)
+            self.worker_rows_to_delete.clear()
+        if self.new_worker_rows:
+            self.api.add_users(self.new_worker_rows)
+            self.new_worker_rows.clear()
+        if self.worker_rows_were_changed:
             list_changed_rows = []
-            for obj in self.rows_were_changed:
+            for obj in self.worker_rows_were_changed:
                 list_changed_rows.append({
                     'email': obj.sibling(obj.row(), 0).data(), 'pwd': '123456', # We are waiting for password corrections
                     'name': [obj.sibling(obj.row(), 1).data(), obj.sibling(obj.row(), 2).data(), obj.sibling(obj.row(), 3).data()],
                     'position': obj.sibling(obj.row(), 4).data()
                     })
             self.api.edit_users(list_changed_rows)
-            self.rows_were_changed.clear()
+            self.worker_rows_were_changed.clear()
         self.update_workers()
 
 
@@ -123,7 +126,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         selected_row = self.workers_table.selectedItems()
         for obj in selected_row:
             obj.setBackground(QColor(255, 253, 153))
-        self.rows_were_changed.extend(self.workers_table.selectionModel().selectedRows())
+        self.worker_rows_were_changed.extend(self.workers_table.selectionModel().selectedRows())
 
 
     def new_inproject_click(self):
@@ -164,8 +167,9 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def undo_changes_workerstable(self):
-        self.rows_to_delete.clear()
-        self.rows_were_changed.clear()
+        self.worker_rows_to_delete.clear()
+        self.worker_rows_were_changed.clear()
+        self.new_worker_rows.clear()
         self.update_workers()
 
 
@@ -348,10 +352,12 @@ class inprojectDialogWindow(QtWidgets.QDialog, add_inproject_dialog.Ui_add_inpro
 
 
 class newUsertDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user_dialog):
-    def __init__(self, api):
+    def __init__(self, api, table, list):
         super().__init__()
         self.setupUi(self)
         self.api = api
+        self.table = table
+        self.list = list
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.add_button.clicked.connect(self.add_button_click)
         self.cancel_button.clicked.connect(self.cancel_button_click)
@@ -375,6 +381,19 @@ class newUsertDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_use
             if not answer['ok']:
                 self.label_error.setText('Неверный вид Email!')
             elif answer['content']['add_users'][0]['ok']:
+                self.api.del_users([{'email': email}])
+                row_pos = self.table.rowCount()
+                self.table.insertRow(row_pos)
+                self.table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(email))
+                self.table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(surname))
+                self.table.setItem(row_pos, 2, QtWidgets.QTableWidgetItem(name))
+                self.table.setItem(row_pos, 3, QtWidgets.QTableWidgetItem(patron))
+                self.table.setItem(row_pos, 4, QtWidgets.QTableWidgetItem(pos))
+                self.list.extend(data)
+                self.table.selectRow(row_pos)
+                row = self.table.selectedItems()
+                for x in row:
+                    x.setBackground(QColor(122, 255, 206))
                 self.close()
             else:
                 self.label_error.setText('Пользователь с таким Email уже существует!')
