@@ -42,12 +42,14 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.del_project.clicked.connect(self.del_project_click)
         self.save_projects.clicked.connect(self.save_projects_click)
 
+        self.undo_changes_workers.clicked.connect(self.undo_changes_workerstable)
+        self.undo_changes_projects.clicked.connect(self.undo_changes_projectstable)
         self.logout.clicked.connect(self.logout_click)
         self.logout_2.clicked.connect(self.logout_click)
         self.settings.clicked.connect(self.settings_click)
         self.settings_2.clicked.connect(self.settings_click)
         self.update_data.clicked.connect(self.update_data_click)
-        self.update_data_2.clicked.connect(self.update_data_click)
+        self.update_data_2.clicked.connect(self.update_data_click2)
 
 
     def update_workers(self):
@@ -161,6 +163,16 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         print('save_projects_click')
 
 
+    def undo_changes_workerstable(self):
+        self.rows_to_delete.clear()
+        self.rows_were_changed.clear()
+        self.update_workers()
+
+
+    def undo_changes_projectstable(self):
+        self.update_projects()
+
+
     def logout_click(self):
         self.workers_table.clear()
         self.projects_table.clear()
@@ -175,6 +187,9 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
     def update_data_click(self):
         self.update_workers()
+
+
+    def update_data_click2(self):
         self.update_projects()
 
     # [X]
