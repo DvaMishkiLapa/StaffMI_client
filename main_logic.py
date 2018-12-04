@@ -122,10 +122,12 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def changed_cell(self):
+        list_delete_worker_rows = [item['email'] for item in self.worker_rows_to_delete]
         selected_row = self.workers_table.selectedItems()
-        for obj in selected_row:
-            obj.setBackground(QColor(255, 253, 153))
-        self.worker_rows_were_changed.extend(self.workers_table.selectionModel().selectedRows())
+        if not list_delete_worker_rows.count(selected_row[0].text()):
+            for obj in selected_row:
+                obj.setBackground(QColor(255, 253, 153))
+            self.worker_rows_were_changed.extend(self.workers_table.selectionModel().selectedRows())
 
 
     def new_inproject_click(self):
