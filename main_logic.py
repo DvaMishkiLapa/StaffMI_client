@@ -170,12 +170,10 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.worker_rows_to_delete.clear()
         self.worker_rows_were_changed.clear()
         self.new_worker_rows.clear()
-        row_pos = self.workers_table.rowCount()
-        for x in range(0, row_pos+1):
-            self.workers_table.selectRow(x)
-            row = self.workers_table.selectedItems()
-            for y in row:
-                y.setBackground(QColor(255, 255, 255))
+        self.workers_table.selectAll()
+        rows = self.workers_table.selectedItems()
+        for x in rows:
+            x.setBackground(QColor(255, 255, 255))
 
 
     def undo_changes_projectstable(self):
