@@ -91,10 +91,17 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def del_worker_click(self):
         selected_rows = self.workers_table.selectionModel().selectedRows()
         for row in selected_rows:
-            self.worker_rows_to_delete.append({'email': row.sibling(row.row(), 0).data()})
-        selected_rows = self.workers_table.selectedItems()
-        for obj in selected_rows:
-            obj.setBackground(QColor(255, 127, 127))
+            table = row.model()
+            index = row.row()
+            data = {'email': row.sibling(index, 0).data()}
+            try:
+                self.worker_rows_to_delete.remove(data)
+                for x in range(0, 5):
+                    table.setData(table.index(index, x), QColor(255, 255, 255), Qt.BackgroundRole)
+            except ValueError:
+                self.worker_rows_to_delete.append(data)
+                for x in range(0, 5):
+                    table.setData(table.index(index, x), QColor(255, 127, 127), Qt.BackgroundRole)
 
 
     def save_workers_click(self):
