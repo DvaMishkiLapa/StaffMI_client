@@ -86,11 +86,10 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def add_worker_click(self):
         chose_dialog = newUsertDialogWindow(self.api, self.workers_table, self.new_worker_rows)
         chose_dialog.exec_()
-        self.workers_table.scrollToBottom()
 
 
     def del_worker_click(self):
-        selected_rows = sorted(self.workers_table.selectionModel().selectedRows())
+        selected_rows = self.workers_table.selectionModel().selectedRows()
         for row in selected_rows:
             self.worker_rows_to_delete.append({'email': row.sibling(row.row(), 0).data()})
         selected_rows = self.workers_table.selectedItems()
@@ -290,6 +289,7 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
             print(data)
         else:
             self.error_replog.setText('Новый логин совпадает с текущим!')
+
     # page_replace_login(2) and page_replace_pwd(2) back button
     def back_login_button_click(self):
         self.login_stack.setCurrentIndex(0) # page_login
@@ -362,6 +362,7 @@ class newUsertDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_use
         self.table = table
         self.list = list
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        
         self.add_button.clicked.connect(self.add_button_click)
         self.cancel_button.clicked.connect(self.cancel_button_click)
 
@@ -401,6 +402,7 @@ class newUsertDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_use
                 row = self.table.selectedItems()
                 for x in row:
                     x.setBackground(QColor(122, 255, 206))
+                self.table.scrollToBottom()
                 self.close()
             else:
                 self.label_error.setText('Пользователь с таким Email уже существует!')
