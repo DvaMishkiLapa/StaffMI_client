@@ -168,11 +168,13 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def undo_changes_workerstable(self):
         self.worker_rows_to_delete.clear()
         self.worker_rows_were_changed.clear()
-        self.new_worker_rows.clear()
         self.workers_table.selectAll()
         rows = self.workers_table.selectedItems()
         for x in rows:
             x.setBackground(QColor(255, 255, 255))
+        for item in [item['email'] for item in self.new_worker_rows]:
+            self.workers_table.removeRow(self.workers_table.findItems(item, Qt.MatchContains)[0].row())
+        self.new_worker_rows.clear()
 
 
     def undo_changes_projectstable(self):
@@ -355,14 +357,14 @@ class inprojectDialogWindow(QtWidgets.QDialog, add_inproject_dialog.Ui_add_inpro
 
 
 class newUsertDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user_dialog):
-    def __init__(self, api, table, list):
+    def __init__(self, api, table, list_new_workers):
         super().__init__()
         self.setupUi(self)
         self.api = api
         self.table = table
-        self.list = list
+        self.list = list_new_workers
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
-        
+
         self.add_button.clicked.connect(self.add_button_click)
         self.cancel_button.clicked.connect(self.cancel_button_click)
 
