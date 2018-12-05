@@ -9,6 +9,7 @@ from ui import main_window
 from ui import login_stack
 from ui import add_inproject_dialog
 from ui import add_new_user_dialog
+from ui import add_new_project_dialog
 import db_api
 
 
@@ -88,7 +89,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def add_worker_click(self):
-        chose_dialog = newUsertDialogWindow(self.api, self.workers_table, self.new_worker_rows)
+        chose_dialog = newUserDialogWindow(self.api, self.workers_table, self.new_worker_rows)
         chose_dialog.exec_()
 
 
@@ -164,7 +165,8 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def add_project_click(self):
-        self.projects_table.insertRow(self.projects_table.rowCount())
+        chose_dialog = newProjectDialogWindow(self.api, self.projects_table, self.new_project_rows)
+        chose_dialog.exec_()
 
 
     def del_project_click(self):
@@ -387,7 +389,58 @@ class inprojectDialogWindow(QtWidgets.QDialog, add_inproject_dialog.Ui_add_inpro
 
 
 
-class newUsertDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user_dialog):
+class newProjectDialogWindow(QtWidgets.QDialog, add_new_project_dialog.Ui_add_new_project_dialog):
+    def __init__(self, api, table, list_new_projects):
+        super().__init__()
+        self.setupUi(self)
+        self.api = api
+        self.table = table
+        self.list = list_new_projects
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+
+        self.add_button.clicked.connect(self.add_button_click)
+        self.cancel_button.clicked.connect(self.cancel_button_click)
+
+
+    def add_button_click(self):
+        self.label_error.setText('')
+        if not self.api.ping_server():
+            self.label_error.setText('Сервер не доступен!')
+            return 
+        name = self.line_project_name.text()
+        deadline = self.calendarWidget.selectedDate()
+        print(deadline.isNull())
+        print(deadline)
+        print(name)
+        if not name or deadline.isNull():
+            self.label_error.setText('Заполнены не все данные!')
+        else:
+            date_deadline = str(deadline.day()) + '.' + str(deadline.month()) + '.' + str(deadline.year())
+            data = [{'name': name, 'deadline': date_deadline}]
+            answer = self.api.add_projects(data)
+            if answer['content']['add_projects'][0]['ok']:
+                self.api.del_projects([{'name': name}]) # server bug
+                row_pos = self.table.rowCount()
+                self.table.insertRow(row_pos)
+                self.table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(name))
+                self.table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(date_deadline))
+                self.list.extend(data)
+                self.table.selectRow(row_pos)
+                row = self.table.selectedItems()
+                for x in row:
+                    x.setBackground(QColor(122, 255, 206))
+                self.table.scrollToBottom()
+                self.close()
+            else:
+                self.label_error.setText('Проект с таким наименованием уже существует!')
+
+
+    def cancel_button_click(self):
+        self.close()
+
+
+
+class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user_dialog):
     def __init__(self, api, table, list_new_workers):
         super().__init__()
         self.setupUi(self)
@@ -443,6 +496,7 @@ class newUsertDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_use
 
     def cancel_button_click(self):
         self.close()
+
 
 
 

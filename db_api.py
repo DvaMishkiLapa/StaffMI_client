@@ -71,18 +71,17 @@ class API:
         return self.send_query({"del_users": email})
 
 
-    # def edit_user(self, email, pwd, surname, name, patronymic, position):
-    #     return self.send_query({'email': email, 'pwd': pwd, 'surname': surname, 'name': name, 'patronymic': patronymic, 'position': position}, 'edit_user')
+    def add_projects(self, projects):
+        return self.send_query({"add_projects": projects})
 
 
-    def add_project(self, name, deadline):
-        return self.send_query({"add_projects": [
-            {'name': name, 'deadline': deadline}
-        ]})
+    def edit_projects(self, projects):
+        return self.send_query({"edit_projects": projects})
 
 
-    # def edit_project(self, token, name, deadline):
-    #     return
+    def del_projects(self, projects):
+        return self.send_query({"del_projects": projects})
+
 
     # def get_users_projects(self, ):
     #     return self.send_query({}, 'get_users_projects')
