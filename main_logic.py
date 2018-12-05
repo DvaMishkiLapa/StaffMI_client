@@ -22,6 +22,9 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.worker_rows_to_delete = []
         self.worker_rows_were_changed = []
         self.new_worker_rows = []
+        self.project_rows_to_delete = []
+        self.project_rows_were_changed = []
+        self.new_project_rows = []
         # self.list_row_wc =[] # Сохранения данных других страниц
 
         self.update_workers()
@@ -31,7 +34,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.add_worker.clicked.connect(self.add_worker_click)
         self.del_worker.clicked.connect(self.del_worker_click)
         self.save_workers.clicked.connect(self.save_workers_click)
-        self.workers_table.doubleClicked.connect(self.changed_cell)
+        self.workers_table.doubleClicked.connect(self.changed_cell_workers_table)
 
         self.new_inproject.clicked.connect(self.new_inproject_click)
         self.new_inproject.clicked.connect(self.current_projects_table.scrollToBottom)
@@ -39,12 +42,13 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.save_inprojects.clicked.connect(self.save_inprojects_click)
 
         self.add_project.clicked.connect(self.add_project_click)
-        self.add_project.clicked.connect(self.projects_table.scrollToBottom)
+        # self.add_project.clicked.connect(self.projects_table.scrollToBottom)
         self.del_project.clicked.connect(self.del_project_click)
         self.save_projects.clicked.connect(self.save_projects_click)
+        self.projects_table.doubleClicked.connect(self.changed_cell_projects_table)
 
-        self.undo_changes_workers.clicked.connect(self.undo_changes_workerstable)
-        self.undo_changes_projects.clicked.connect(self.undo_changes_projectstable)
+        self.undo_changes_workers.clicked.connect(self.undo_changes_workers_table)
+        self.undo_changes_projects.clicked.connect(self.undo_changes_projects_table)
         self.logout.clicked.connect(self.logout_click)
         self.logout_2.clicked.connect(self.logout_click)
         self.settings.clicked.connect(self.settings_click)
@@ -128,7 +132,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.update_workers()
 
 
-    def changed_cell(self):
+    def changed_cell_workers_table(self):
         list_delete_worker_rows = [item['email'] for item in self.worker_rows_to_delete]
         selected_row = self.workers_table.selectedItems()
         if not list_delete_worker_rows.count(selected_row[0].text()):
@@ -164,17 +168,35 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def del_project_click(self):
-        selected_row = self.projects_table.selectionModel().selectedRows()
-        while len(selected_row):
-            self.projects_table.removeRow(selected_row[-1].row())
-            selected_row.pop()
+        selected_rows = self.projects_table.selectionModel().selectedRows()
+        for row in selected_rows:
+            table = row.model()
+            index = row.row()
+            data = {'name': row.sibling(index, 0).data()}
+            try:
+                self.project_rows_to_delete.remove(data)
+                for x in range(0, 5):
+                    table.setData(table.index(index, x), QColor(255, 255, 255), Qt.BackgroundRole)
+            except ValueError:
+                self.project_rows_to_delete.append(data)
+                for x in range(0, 5):
+                    table.setData(table.index(index, x), QColor(255, 127, 127), Qt.BackgroundRole)
 
 
     def save_projects_click(self):
         print('save_projects_click')
 
 
-    def undo_changes_workerstable(self):
+    def changed_cell_projects_table(self):
+        list_delete_project_rows = [item['name'] for item in self.project_rows_to_delete]
+        selected_row = self.projects_table.selectedItems()
+        if not list_delete_project_rows.count(selected_row[0].text()):
+            for obj in selected_row:
+                obj.setBackground(QColor(255, 253, 153))
+            self.project_rows_were_changed.extend(self.projects_table.selectionModel().selectedRows())
+
+
+    def undo_changes_workers_table(self):
         self.worker_rows_to_delete.clear()
         self.worker_rows_were_changed.clear()
         self.workers_table.selectAll()
@@ -186,7 +208,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.new_worker_rows.clear()
 
 
-    def undo_changes_projectstable(self):
+    def undo_changes_projects_table(self):
         print('undo_changes_projectstable')
 
 
