@@ -1127,6 +1127,35 @@ font-weight: bold;</string>
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>add_worker</tabstop>
+  <tabstop>del_worker</tabstop>
+  <tabstop>save_workers</tabstop>
+  <tabstop>search_user</tabstop>
+  <tabstop>new_inproject</tabstop>
+  <tabstop>del_inproject</tabstop>
+  <tabstop>save_inprojects</tabstop>
+  <tabstop>undo_changes_workers</tabstop>
+  <tabstop>update_data</tabstop>
+  <tabstop>settings</tabstop>
+  <tabstop>logout</tabstop>
+  <tabstop>workers_table</tabstop>
+  <tabstop>current_projects_table</tabstop>
+  <tabstop>page_left</tabstop>
+  <tabstop>output_size</tabstop>
+  <tabstop>page_right</tabstop>
+  <tabstop>scrollArea_2</tabstop>
+  <tabstop>add_project</tabstop>
+  <tabstop>del_project</tabstop>
+  <tabstop>save_projects</tabstop>
+  <tabstop>undo_changes_projects</tabstop>
+  <tabstop>update_data_2</tabstop>
+  <tabstop>settings_2</tabstop>
+  <tabstop>logout_2</tabstop>
+  <tabstop>projects_table</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

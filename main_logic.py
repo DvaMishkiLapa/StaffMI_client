@@ -310,12 +310,7 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
         self.input_pwd.setText(self.data['user_info']['pwd'])
 
         self.login_button.clicked.connect(self.login_button_click)
-        self.newlogin_button.clicked.connect(self.newlogin_button_click)
         self.newpwd_button.clicked.connect(self.newpwd_button_click)
-
-        # page_replace_login(2) buttons events
-        self.save_newlogin_button.clicked.connect(self.save_newlogin_button_click)
-        self.back_login_button2.clicked.connect(self.back_login_button_click)
 
         # page_replace_pwd(1) buttons events
         self.save_newpwd_button.clicked.connect(self.save_newpwd_button_click)
@@ -351,9 +346,6 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
             self.label_log_login.setText('Сервер недоступен!')
             return
 
-    # page_login(0) go to the user password change window
-    def newlogin_button_click(self):
-        self.login_stack.setCurrentIndex(2) # page_replace_pwd
 
     # page_login(0) go to the user login change window
     def newpwd_button_click(self):
@@ -375,7 +367,7 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
         else:
             self.error_replog.setText('Новый логин совпадает с текущим!')
 
-    # page_replace_login(2) and page_replace_pwd(2) back button
+    # page_replace_pwd(2) back button
     def back_login_button_click(self):
         self.login_stack.setCurrentIndex(0) # page_login
 
