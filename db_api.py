@@ -20,7 +20,10 @@ class API:
 
     def authorization(self, email, pwd):
         data = json.dumps({"requests": {"authorization": {"email": email, "pwd": pwd}}, 'token': ''})
-        response = requests.post(host, data=data).json()
+        try:
+            response = requests.post(host, data=data).json()
+        except requests.exceptions.ConnectionError:
+            pass
         self.token = response['content']['authorization']['content']
         return response['content']['authorization']['ok']
 
@@ -32,8 +35,8 @@ class API:
             if response['error_code'] == 403:
                 self.authorization(self.user, self.pwd)
                 data = json.dumps({"requests": args, 'token': self.token})
-                response = requests.post(host, data=data).json()
-        except Exception:
+                response = requests.post('qwe', data=data).json()
+        except KeyError:  
             pass
         if not (len(args) == 1):
             pass
@@ -51,12 +54,12 @@ class API:
         return system_call(command) == 0
 
 
-    def get_all_users(self):
-        return self.send_query({"get_all_users": {}})
+    def get_all_users(self, args):
+        return self.send_query({"get_all_users": args})
 
 
-    def get_all_projects(self):
-        return self.send_query({"get_all_projects": {}})
+    def get_all_projects(self, args):
+        return self.send_query({"get_all_projects": args})
 
 
     def add_users(self, users):
@@ -67,8 +70,8 @@ class API:
         return self.send_query({"edit_users": users})
 
 
-    def del_users(self, email):
-        return self.send_query({"del_users": email})
+    def del_users(self, emails):
+        return self.send_query({"del_users": emails})
 
 
     def add_projects(self, projects):
@@ -81,6 +84,9 @@ class API:
 
     def del_projects(self, projects):
         return self.send_query({"del_projects": projects})
+
+    def change_password(self, args):
+        return self.send_query({"change_password": args})
 
 
     # def get_users_projects(self, ):

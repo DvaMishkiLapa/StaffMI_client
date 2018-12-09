@@ -26,6 +26,9 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.project_rows_to_delete = []
         self.project_rows_were_changed = []
         self.new_project_rows = []
+
+        self.workers_dict_links = {}
+        self.projects_dict_links = {}
         # self.list_row_wc =[] # Сохранения данных других страниц
 
         self.update_workers()
@@ -54,8 +57,8 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.logout_2.clicked.connect(self.logout_click)
         self.settings.clicked.connect(self.settings_click)
         self.settings_2.clicked.connect(self.settings_click)
-        self.update_data.clicked.connect(self.update_data_click)
-        self.update_data_2.clicked.connect(self.update_data_click2)
+        self.update_data.clicked.connect(self.update_workers_table_click)
+        self.update_data_2.clicked.connect(self.update_projects_table_click)
 
 
     def update_workers(self):
@@ -65,13 +68,16 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             return 
         self.workers_table.clearContents()
         self.workers_table.setRowCount(0)
-        for worker in self.api.get_all_users():
+        for worker in self.api.get_all_users({"offset": 0, "length": 100}):
             row_pos = self.workers_table.rowCount()
             self.workers_table.insertRow(row_pos)
             self.workers_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(worker['email']))
             for x in range(1, 4):
                 self.workers_table.setItem(row_pos, x, QtWidgets.QTableWidgetItem(worker['name'][x-1]))
             self.workers_table.setItem(row_pos, 4, QtWidgets.QTableWidgetItem(worker['position']))
+            self.workers_table.selectAll()
+            selected_rows = self.workers_table.selectionModel().selectedRows()
+            self.workers_dict_links.update({selected_rows[-1]: worker['_id']})
 
 
     def update_projects(self):
@@ -81,11 +87,14 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             return 
         self.projects_table.clearContents()
         self.projects_table.setRowCount(0)
-        for project in self.api.get_all_projects():
+        for project in self.api.get_all_projects({"offset": 0, "length": 100}):
             row_pos = self.projects_table.rowCount()
             self.projects_table.insertRow(row_pos)
             self.projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(project['name']))
             self.projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(project['deadline']))
+            self.projects_table.selectAll()
+            selected_rows = self.projects_table.selectionModel().selectedRows()
+            self.projects_dict_links.update({selected_rows[-1]: project['_id']})
 
 
     def add_worker_click(self):
@@ -98,13 +107,12 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         for row in selected_rows:
             table = row.model()
             index = row.row()
-            data = {'email': row.sibling(index, 0).data()}
             try:
-                self.worker_rows_to_delete.remove(data)
+                self.worker_rows_to_delete.remove(row)
                 for x in range(0, 5):
                     table.setData(table.index(index, x), QColor(255, 255, 255), Qt.BackgroundRole)
             except ValueError:
-                self.worker_rows_to_delete.append(data)
+                self.worker_rows_to_delete.append(row)
                 for x in range(0, 5):
                     table.setData(table.index(index, x), QColor(255, 127, 127), Qt.BackgroundRole)
 
@@ -115,7 +123,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             self.label_log_main.setText('Сервер не доступен!')
             return 
         if self.worker_rows_to_delete:
-            self.api.del_users(self.worker_rows_to_delete)
+            self.api.del_users([self.workers_dict_links.get(obj) for obj in self.worker_rows_to_delete])
             self.worker_rows_to_delete.clear()
         if self.new_worker_rows:
             self.api.add_users(self.new_worker_rows)
@@ -124,6 +132,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             list_changed_rows = []
             for obj in self.worker_rows_were_changed:
                 list_changed_rows.append({
+                    '_id': self.workers_dict_links.get(obj),
                     'email': obj.sibling(obj.row(), 0).data(), 'pwd': '123456', # We are waiting for password corrections
                     'name': [obj.sibling(obj.row(), 1).data(), obj.sibling(obj.row(), 2).data(), obj.sibling(obj.row(), 3).data()],
                     'position': obj.sibling(obj.row(), 4).data()
@@ -134,7 +143,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def changed_cell_workers_table(self):
-        list_delete_worker_rows = [item['email'] for item in self.worker_rows_to_delete]
+        list_delete_worker_rows = [obj.sibling(obj.row(), 0).data() for obj in self.worker_rows_to_delete]
         selected_row = self.workers_table.selectedItems()
         if not list_delete_worker_rows.count(selected_row[0].text()):
             for obj in selected_row:
@@ -143,7 +152,7 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def new_inproject_click(self):
-        chose_dialog = inprojectDialogWindow(self.api.get_all_projects())
+        chose_dialog = inprojectDialogWindow(self.api.get_all_projects({"offset": 0, "length": 100}))
         chose_dialog.exec_()
         answer = chose_dialog.answer
         if answer != None:
@@ -174,23 +183,42 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         for row in selected_rows:
             table = row.model()
             index = row.row()
-            data = {'name': row.sibling(index, 0).data()}
             try:
-                self.project_rows_to_delete.remove(data)
+                self.project_rows_to_delete.remove(row)
                 for x in range(0, 5):
                     table.setData(table.index(index, x), QColor(255, 255, 255), Qt.BackgroundRole)
             except ValueError:
-                self.project_rows_to_delete.append(data)
+                self.project_rows_to_delete.append(row)
                 for x in range(0, 5):
                     table.setData(table.index(index, x), QColor(255, 127, 127), Qt.BackgroundRole)
 
 
     def save_projects_click(self):
-        print('save_projects_click')
+        self.label_log_main.setText('')
+        if not self.api.ping_server():
+            self.label_log_main.setText('Сервер не доступен!')
+            return 
+        if self.project_rows_to_delete:
+            self.api.del_projects([self.projects_dict_links.get(obj) for obj in self.project_rows_to_delete])
+            self.project_rows_to_delete.clear()
+        if self.new_project_rows:
+            self.api.add_projects(self.new_project_rows)
+            self.new_project_rows.clear()
+        if self.project_rows_were_changed:
+            list_changed_rows = []
+            for obj in self.project_rows_were_changed:
+                list_changed_rows.append({
+                    '_id': self.projects_dict_links.get(obj),
+                    'name': obj.sibling(obj.row(), 0).data(),
+                    'deadline': obj.sibling(obj.row(), 1).data()
+                    })
+            self.api.edit_projects(list_changed_rows)
+            self.project_rows_were_changed.clear()
+        self.update_projects()
 
 
     def changed_cell_projects_table(self):
-        list_delete_project_rows = [item['name'] for item in self.project_rows_to_delete]
+        list_delete_project_rows = [[obj.sibling(obj.row(), 0).data() for obj in self.project_rows_to_delete]]
         selected_row = self.projects_table.selectedItems()
         if not list_delete_project_rows.count(selected_row[0].text()):
             for obj in selected_row:
@@ -211,8 +239,15 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def undo_changes_projects_table(self):
-        print('undo_changes_projectstable')
-
+        self.project_rows_to_delete.clear()
+        self.project_rows_were_changed.clear()
+        self.projects_table.selectAll()
+        rows = self.projects_table.selectedItems()
+        for x in rows:
+            x.setBackground(QColor(255, 255, 255))
+        for item in [item['name'] for item in self.new_project_rows]:
+            self.projects_table.removeRow(self.projects_table.findItems(item, Qt.MatchContains)[0].row())
+        self.new_project_rows.clear()
 
     def logout_click(self):
         self.workers_table.clear()
@@ -226,11 +261,11 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         print("settings_click")
 
 
-    def update_data_click(self):
+    def update_workers_table_click(self):
         self.update_workers()
 
 
-    def update_data_click2(self):
+    def update_projects_table_click(self):
         self.update_projects()
 
     # [X]
@@ -274,10 +309,10 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
 
     # page_login(0) login button
     def login_button_click(self):
-        self.label_log_login.setText('')
-        if not self.api.ping_server():
-            self.label_log_login.setText('Сервер не доступен!')
-            return 
+        # self.label_log_login.setText('')
+        # if not self.api.ping_server():
+        #     self.label_log_login.setText('Сервер не доступен!')
+        #     return 
         flag = self.check_save_loginpwd.isChecked()
         self.api.user = self.input_login.text()
         self.api.pwd = self.input_pwd.text()
@@ -331,25 +366,25 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
 
     # page_replace_pwd(2) button user pwd changes
     def save_newpwd_button_click(self):
-        self.label_log_reppwd.setText('')
-        if not self.api.ping_server():
-            self.label_log_reppwd.setText('Сервер не доступен!')
-            return 
-        login = self.input_login_reppwd.text()
-        old_pwd = self.input_oldpwd.text()
-        new_pwd = self.input_newpwd.text()
-        answer = self.api.authorization(login, old_pwd)
-        if not answer:
-            self.error_reppwd.setStyleSheet("color: rgb(255, 0, 0);; font-weight: bold;")
-            self.error_reppwd.setText('Неверный логин или пароль!')
-        elif old_pwd != new_pwd:
-            data = [{'email': login, 'pwd': new_pwd, 'name': ['1', '2', '3'], 'position': '4'}]
-            self.api.edit_users(data)
-            self.error_reppwd.setStyleSheet("color: rgb(75, 225, 0);; font-weight: bold;")
-            self.error_reppwd.setText('Пароль успешно изменен')
-        else:
-            self.error_reppwd.setStyleSheet("color: rgb(255, 0, 0);; font-weight: bold;")
-            self.error_reppwd.setText('Новый пароль совпадает с текущим!')
+        pass
+        # self.label_log_reppwd.setText('')
+        # if not self.api.ping_server():
+        #     self.label_log_reppwd.setText('Сервер не доступен!')
+        #     return 
+        # login = self.input_login_reppwd.text()
+        # old_pwd = self.input_oldpwd.text()
+        # new_pwd = self.input_newpwd.text()
+        # if old_pwd != new_pwd:
+        #     answer = self.api.change_password({'email': login, 'old_pwd': old_pwd, 'new_pwd': new_pwd})
+        #     if answer:
+        #         self.error_reppwd.setStyleSheet("color: rgb(75, 225, 0);; font-weight: bold;")
+        #         self.error_reppwd.setText('Пароль успешно изменен')
+        #     else:
+        #         self.error_reppwd.setStyleSheet("color: rgb(255, 0, 0);; font-weight: bold;")
+        #         self.error_reppwd.setText('Неверный логин или пароль!')
+        # else:
+        #     self.error_reppwd.setStyleSheet("color: rgb(255, 0, 0);; font-weight: bold;")
+        #     self.error_reppwd.setText('Новый пароль совпадает с текущим!')
 
     # [X]
     def closeEvent(self, event):
@@ -409,9 +444,6 @@ class newProjectDialogWindow(QtWidgets.QDialog, add_new_project_dialog.Ui_add_ne
             return 
         name = self.line_project_name.text()
         deadline = self.calendarWidget.selectedDate()
-        print(deadline.isNull())
-        print(deadline)
-        print(name)
         if not name or deadline.isNull():
             self.label_error.setText('Заполнены не все данные!')
         else:
@@ -419,8 +451,9 @@ class newProjectDialogWindow(QtWidgets.QDialog, add_new_project_dialog.Ui_add_ne
             data = [{'name': name, 'deadline': date_deadline}]
             answer = self.api.add_projects(data)
             if answer['content']['add_projects'][0]['ok']:
-                self.api.del_projects([{'name': name}]) # server bug
                 row_pos = self.table.rowCount()
+                last_row = self.api.get_all_projects({"offset": -1, "length": row_pos+42})[0]
+                self.api.del_projects([last_row['_id']])
                 self.table.insertRow(row_pos)
                 self.table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(name))
                 self.table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(date_deadline))
@@ -475,8 +508,9 @@ class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user
             if not answer['ok']:
                 self.label_error.setText('Неверный вид Email!')
             elif answer['content']['add_users'][0]['ok']:
-                self.api.del_users([{'email': email}])
                 row_pos = self.table.rowCount()
+                last_row = self.api.get_all_users({"offset": -1, "length": row_pos+42})[0]
+                self.api.del_users([last_row['_id']])
                 self.table.insertRow(row_pos)
                 self.table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(email))
                 self.table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(surname))
