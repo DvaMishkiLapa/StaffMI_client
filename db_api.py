@@ -2,8 +2,6 @@ import sqlite3
 import json
 import urllib.parse
 import requests
-from platform import system as system_name
-from subprocess import call as system_call
 
 host = 'https://pms.kmm-vsu.ru/'
 host_for_ping = 'pms.kmm-vsu.ru'
@@ -23,21 +21,27 @@ class API:
         try:
             response = requests.post(host, data=data).json()
         except requests.exceptions.ConnectionError:
-            pass
+            return False
         self.token = response['content']['authorization']['content']
-        return response['content']['authorization']['ok']
+        return response
 
 
     def send_query(self, args):
         data = json.dumps({"requests": args, 'token': self.token})
-        response = requests.post(host, data=data).json()
+        try:
+            response = requests.post(host, data=data).json()
+        except requests.exceptions.ConnectionError:
+            return False
         try:
             if response['error_code'] == 403:
                 self.authorization(self.user, self.pwd)
                 data = json.dumps({"requests": args, 'token': self.token})
-                response = requests.post('qwe', data=data).json()
-        except KeyError:  
-            pass
+                response = requests.post(host, data=data).json()
+        except (KeyError, requests.exceptions.ConnectionError) as e:
+            if e == KeyError:
+                pass
+            elif e == requests.exceptions.ConnectionError:
+                return False
         if not (len(args) == 1):
             pass
         elif response['ok']:
@@ -46,12 +50,6 @@ class API:
             except Exception:
                 pass
         return response
-
-
-    def ping_server(self):
-        param = '-n' if system_name().lower()=='windows' else '-c'
-        command = ['ping', param, '1', host_for_ping]
-        return system_call(command) == 0
 
 
     def get_all_users(self, args):

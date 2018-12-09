@@ -63,38 +63,42 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
     def update_workers(self):
         self.label_log_main.setText('')
-        if not self.api.ping_server():
-            self.label_log_main.setText('Сервер не доступен!')
-            return 
-        self.workers_table.clearContents()
-        self.workers_table.setRowCount(0)
-        for worker in self.api.get_all_users({"offset": 0, "length": 100}):
-            row_pos = self.workers_table.rowCount()
-            self.workers_table.insertRow(row_pos)
-            self.workers_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(worker['email']))
-            for x in range(1, 4):
-                self.workers_table.setItem(row_pos, x, QtWidgets.QTableWidgetItem(worker['name'][x-1]))
-            self.workers_table.setItem(row_pos, 4, QtWidgets.QTableWidgetItem(worker['position']))
-            self.workers_table.selectAll()
-            selected_rows = self.workers_table.selectionModel().selectedRows()
-            self.workers_dict_links.update({selected_rows[-1]: worker['_id']})
+        answer = self.api.get_all_users({"offset": 0, "length": 100})
+        if answer:
+            self.workers_table.clearContents()
+            self.workers_table.setRowCount(0)
+            for worker in answer:
+                row_pos = self.workers_table.rowCount()
+                self.workers_table.insertRow(row_pos)
+                self.workers_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(worker['email']))
+                for x in range(1, 4):
+                    self.workers_table.setItem(row_pos, x, QtWidgets.QTableWidgetItem(worker['name'][x-1]))
+                self.workers_table.setItem(row_pos, 4, QtWidgets.QTableWidgetItem(worker['position']))
+                self.workers_table.selectAll()
+                selected_rows = self.workers_table.selectionModel().selectedRows()
+                self.workers_dict_links.update({selected_rows[-1]: worker['_id']})
+        else:
+            self.label_log_main.setText('Сервер недоступен!')
+            return
 
 
     def update_projects(self):
         self.label_log_main.setText('')
-        if not self.api.ping_server():
-            self.label_log_main.setText('Сервер не доступен!')
-            return 
-        self.projects_table.clearContents()
-        self.projects_table.setRowCount(0)
-        for project in self.api.get_all_projects({"offset": 0, "length": 100}):
-            row_pos = self.projects_table.rowCount()
-            self.projects_table.insertRow(row_pos)
-            self.projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(project['name']))
-            self.projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(project['deadline']))
-            self.projects_table.selectAll()
-            selected_rows = self.projects_table.selectionModel().selectedRows()
-            self.projects_dict_links.update({selected_rows[-1]: project['_id']})
+        answer = self.api.get_all_projects({"offset": 0, "length": 100})
+        if answer:
+            self.projects_table.clearContents()
+            self.projects_table.setRowCount(0)
+            for project in answer:
+                row_pos = self.projects_table.rowCount()
+                self.projects_table.insertRow(row_pos)
+                self.projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(project['name']))
+                self.projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(project['deadline']))
+                self.projects_table.selectAll()
+                selected_rows = self.projects_table.selectionModel().selectedRows()
+                self.projects_dict_links.update({selected_rows[-1]: project['_id']})
+        else:
+            self.label_log_main.setText('Сервер недоступен!')
+            return
 
 
     def add_worker_click(self):
@@ -119,27 +123,28 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
     def save_workers_click(self):
         self.label_log_main.setText('')
-        if not self.api.ping_server():
-            self.label_log_main.setText('Сервер не доступен!')
-            return 
-        if self.worker_rows_to_delete:
-            self.api.del_users([self.workers_dict_links.get(obj) for obj in self.worker_rows_to_delete])
-            self.worker_rows_to_delete.clear()
-        if self.new_worker_rows:
-            self.api.add_users(self.new_worker_rows)
-            self.new_worker_rows.clear()
-        if self.worker_rows_were_changed:
-            list_changed_rows = []
-            for obj in self.worker_rows_were_changed:
-                list_changed_rows.append({
-                    '_id': self.workers_dict_links.get(obj),
-                    'email': obj.sibling(obj.row(), 0).data(), 'pwd': '123456', # We are waiting for password corrections
-                    'name': [obj.sibling(obj.row(), 1).data(), obj.sibling(obj.row(), 2).data(), obj.sibling(obj.row(), 3).data()],
-                    'position': obj.sibling(obj.row(), 4).data()
-                    })
-            self.api.edit_users(list_changed_rows)
-            self.worker_rows_were_changed.clear()
-        self.update_workers()
+        if self.api.get_all_users({"offset": 0, "length": 1}):
+            if self.worker_rows_to_delete:
+                self.api.del_users([self.workers_dict_links.get(obj) for obj in self.worker_rows_to_delete])
+                self.worker_rows_to_delete.clear()
+            if self.new_worker_rows:
+                self.api.add_users(self.new_worker_rows)
+                self.new_worker_rows.clear()
+            if self.worker_rows_were_changed:
+                list_changed_rows = []
+                for obj in self.worker_rows_were_changed:
+                    list_changed_rows.append({
+                        '_id': self.workers_dict_links.get(obj),
+                        'email': obj.sibling(obj.row(), 0).data(), 'pwd': '123456', # We are waiting for password corrections
+                        'name': [obj.sibling(obj.row(), 1).data(), obj.sibling(obj.row(), 2).data(), obj.sibling(obj.row(), 3).data()],
+                        'position': obj.sibling(obj.row(), 4).data()
+                        })
+                self.api.edit_users(list_changed_rows)
+                self.worker_rows_were_changed.clear()
+            self.update_workers()
+        else:
+            self.label_log_main.setText('Сервер недоступен!')
+            return
 
 
     def changed_cell_workers_table(self):
@@ -152,14 +157,19 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def new_inproject_click(self):
-        chose_dialog = inprojectDialogWindow(self.api.get_all_projects({"offset": 0, "length": 100}))
-        chose_dialog.exec_()
-        answer = chose_dialog.answer
-        if answer != None:
-            row_pos = self.current_projects_table.rowCount()
-            self.current_projects_table.insertRow(row_pos)
-            self.current_projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(answer[0]))
-            self.current_projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(answer[1]))
+        answer = self.api.get_all_projects({"offset": 0, "length": 100})
+        if answer:
+            chose_dialog = inprojectDialogWindow(answer)
+            chose_dialog.exec_()
+            answer = chose_dialog.answer
+            if answer != None:
+                row_pos = self.current_projects_table.rowCount()
+                self.current_projects_table.insertRow(row_pos)
+                self.current_projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(answer[0]))
+                self.current_projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(answer[1]))
+        else:
+            self.label_log_main.setText('Сервер недоступен!')
+            return
 
 
     def del_inproject_click(self):
@@ -195,26 +205,30 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
     def save_projects_click(self):
         self.label_log_main.setText('')
-        if not self.api.ping_server():
-            self.label_log_main.setText('Сервер не доступен!')
-            return 
-        if self.project_rows_to_delete:
-            self.api.del_projects([self.projects_dict_links.get(obj) for obj in self.project_rows_to_delete])
-            self.project_rows_to_delete.clear()
-        if self.new_project_rows:
-            self.api.add_projects(self.new_project_rows)
-            self.new_project_rows.clear()
-        if self.project_rows_were_changed:
-            list_changed_rows = []
-            for obj in self.project_rows_were_changed:
-                list_changed_rows.append({
-                    '_id': self.projects_dict_links.get(obj),
-                    'name': obj.sibling(obj.row(), 0).data(),
-                    'deadline': obj.sibling(obj.row(), 1).data()
-                    })
-            self.api.edit_projects(list_changed_rows)
-            self.project_rows_were_changed.clear()
-        self.update_projects()
+        if self.api.get_all_users({"offset": 0, "length": 1}):
+            if not self.api.ping_server():
+                self.label_log_main.setText('Сервер недоступен!')
+                return 
+            if self.project_rows_to_delete:
+                self.api.del_projects([self.projects_dict_links.get(obj) for obj in self.project_rows_to_delete])
+                self.project_rows_to_delete.clear()
+            if self.new_project_rows:
+                self.api.add_projects(self.new_project_rows)
+                self.new_project_rows.clear()
+            if self.project_rows_were_changed:
+                list_changed_rows = []
+                for obj in self.project_rows_were_changed:
+                    list_changed_rows.append({
+                        '_id': self.projects_dict_links.get(obj),
+                        'name': obj.sibling(obj.row(), 0).data(),
+                        'deadline': obj.sibling(obj.row(), 1).data()
+                        })
+                self.api.edit_projects(list_changed_rows)
+                self.project_rows_were_changed.clear()
+            self.update_projects()
+        else:
+            self.label_log_main.setText('Сервер недоступен!')
+            return
 
 
     def changed_cell_projects_table(self):
@@ -309,32 +323,33 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
 
     # page_login(0) login button
     def login_button_click(self):
-        # self.label_log_login.setText('')
-        # if not self.api.ping_server():
-        #     self.label_log_login.setText('Сервер не доступен!')
-        #     return 
-        flag = self.check_save_loginpwd.isChecked()
+        self.label_log_login.setText('')
         self.api.user = self.input_login.text()
         self.api.pwd = self.input_pwd.text()
         answer = self.api.authorization(self.api.user, self.api.pwd)
-        if not answer:
-            self.error_loginpwd.setText('Неверный логин или пароль!')
-        elif flag:
-            with open('memory.json', 'w') as f:
-                f.write(json.dumps({'user_info':{'login': self.api.user, 'pwd': self.api.pwd}, 'flag': flag}))
-            self.destroy()
-            self.pemiWindow = pemiWindow(self.api)
-            self.pemiWindow.last_window = self
-            self.pemiWindow.show()
+        flag = self.check_save_loginpwd.isChecked()
+        if answer:
+            if not answer['content']['authorization']['ok']:
+                self.error_loginpwd.setText('Неверный логин или пароль!')
+            elif flag:
+                with open('memory.json', 'w') as f:
+                    f.write(json.dumps({'user_info':{'login': self.api.user, 'pwd': self.api.pwd}, 'flag': flag}))
+                self.destroy()
+                self.pemiWindow = pemiWindow(self.api)
+                self.pemiWindow.last_window = self
+                self.pemiWindow.show()
+            else:
+                with open('memory.json', 'w') as f:
+                    f.write(json.dumps({'user_info': {'login': '', 'pwd': ''}, 'flag': False}))
+                self.input_login.setText('')
+                self.input_pwd.setText('')
+                self.destroy()
+                self.pemiWindow = pemiWindow(self.api)
+                self.pemiWindow.last_window = self
+                self.pemiWindow.show()
         else:
-            with open('memory.json', 'w') as f:
-                f.write(json.dumps({'user_info': {'login': '', 'pwd': ''}, 'flag': False}))
-            self.input_login.setText('')
-            self.input_pwd.setText('')
-            self.destroy()
-            self.pemiWindow = pemiWindow(self.api)
-            self.pemiWindow.last_window = self
-            self.pemiWindow.show()
+            self.label_log_login.setText('Сервер недоступен!')
+            return
 
     # page_login(0) go to the user password change window
     def newlogin_button_click(self):
@@ -348,7 +363,7 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
     def save_newlogin_button_click(self):
         self.label_log_replogin.setText('')
         if not self.api.ping_server():
-            self.label_log_replogin.setText('Сервер не доступен!')
+            self.label_log_replogin.setText('Сервер недоступен!')
             return 
         old_login = self.input_oldlogin.text()
         pwd = self.input_pwd_replogin.text()
@@ -369,7 +384,7 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
         pass
         # self.label_log_reppwd.setText('')
         # if not self.api.ping_server():
-        #     self.label_log_reppwd.setText('Сервер не доступен!')
+        #     self.label_log_reppwd.setText('Сервер недоступен!')
         #     return 
         # login = self.input_login_reppwd.text()
         # old_pwd = self.input_oldpwd.text()
@@ -439,33 +454,34 @@ class newProjectDialogWindow(QtWidgets.QDialog, add_new_project_dialog.Ui_add_ne
 
     def add_button_click(self):
         self.label_error.setText('')
-        if not self.api.ping_server():
-            self.label_error.setText('Сервер не доступен!')
-            return 
-        name = self.line_project_name.text()
-        deadline = self.calendarWidget.selectedDate()
-        if not name or deadline.isNull():
-            self.label_error.setText('Заполнены не все данные!')
-        else:
-            date_deadline = str(deadline.day()) + '.' + str(deadline.month()) + '.' + str(deadline.year())
-            data = [{'name': name, 'deadline': date_deadline}]
-            answer = self.api.add_projects(data)
-            if answer['content']['add_projects'][0]['ok']:
-                row_pos = self.table.rowCount()
-                last_row = self.api.get_all_projects({"offset": -1, "length": row_pos+42})[0]
-                self.api.del_projects([last_row['_id']])
-                self.table.insertRow(row_pos)
-                self.table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(name))
-                self.table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(date_deadline))
-                self.list.extend(data)
-                self.table.selectRow(row_pos)
-                row = self.table.selectedItems()
-                for x in row:
-                    x.setBackground(QColor(122, 255, 206))
-                self.table.scrollToBottom()
-                self.close()
+        if self.api.get_all_users({"offset": 0, "length": 1}):
+            name = self.line_project_name.text()
+            deadline = self.calendarWidget.selectedDate()
+            if not name or deadline.isNull():
+                self.label_error.setText('Заполнены не все данные!')
             else:
-                self.label_error.setText('Проект с таким наименованием уже существует!')
+                date_deadline = str(deadline.day()) + '.' + str(deadline.month()) + '.' + str(deadline.year())
+                data = [{'name': name, 'deadline': date_deadline}]
+                answer = self.api.add_projects(data)
+                if answer['content']['add_projects'][0]['ok']:
+                    row_pos = self.table.rowCount()
+                    last_row = self.api.get_all_projects({"offset": -1, "length": row_pos+42})[0]
+                    self.api.del_projects([last_row['_id']])
+                    self.table.insertRow(row_pos)
+                    self.table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(name))
+                    self.table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(date_deadline))
+                    self.list.extend(data)
+                    self.table.selectRow(row_pos)
+                    row = self.table.selectedItems()
+                    for x in row:
+                        x.setBackground(QColor(122, 255, 206))
+                    self.table.scrollToBottom()
+                    self.close()
+                else:
+                    self.label_error.setText('Проект с таким наименованием уже существует!')
+        else:
+            self.label_error.setText('Сервер недоступен!')
+            return 
 
 
     def cancel_button_click(self):
@@ -488,44 +504,45 @@ class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user
 
     def add_button_click(self):
         self.label_error.setText('')
-        if not self.api.ping_server():
-            self.label_error.setText('Сервер не доступен!')
-            return 
-        email = self.lineEdit_email.text()
-        surname = self.lineEdit_surname.text()
-        name = self.lineEdit_name.text()
-        patron = self.lineEdit_patron.text()
-        pos = self.lineEdit_pos.text()
-        pwd = self.lineEdit_pwd.text()
-        confpwd = self.lineEdit_confpwd.text()
-        if not (email and name and surname and patron and pos and pwd and confpwd):
-            self.label_error.setText('Заполнены не все поля!')
-        elif not (pwd == confpwd):
-            self.label_error.setText('Пароли не совпадают!')
-        else:
-            data = [{'email': email, 'pwd': pwd, 'name': [surname, name, patron], 'position': pos}]
-            answer = self.api.add_users(data)
-            if not answer['ok']:
-                self.label_error.setText('Неверный вид Email!')
-            elif answer['content']['add_users'][0]['ok']:
-                row_pos = self.table.rowCount()
-                last_row = self.api.get_all_users({"offset": -1, "length": row_pos+42})[0]
-                self.api.del_users([last_row['_id']])
-                self.table.insertRow(row_pos)
-                self.table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(email))
-                self.table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(surname))
-                self.table.setItem(row_pos, 2, QtWidgets.QTableWidgetItem(name))
-                self.table.setItem(row_pos, 3, QtWidgets.QTableWidgetItem(patron))
-                self.table.setItem(row_pos, 4, QtWidgets.QTableWidgetItem(pos))
-                self.list.extend(data)
-                self.table.selectRow(row_pos)
-                row = self.table.selectedItems()
-                for x in row:
-                    x.setBackground(QColor(122, 255, 206))
-                self.table.scrollToBottom()
-                self.close()
+        if self.api.get_all_users({"offset": 0, "length": 1}):
+            email = self.lineEdit_email.text()
+            surname = self.lineEdit_surname.text()
+            name = self.lineEdit_name.text()
+            patron = self.lineEdit_patron.text()
+            pos = self.lineEdit_pos.text()
+            pwd = self.lineEdit_pwd.text()
+            confpwd = self.lineEdit_confpwd.text()
+            if not (email and name and surname and patron and pos and pwd and confpwd):
+                self.label_error.setText('Заполнены не все поля!')
+            elif not (pwd == confpwd):
+                self.label_error.setText('Пароли не совпадают!')
             else:
-                self.label_error.setText('Пользователь с таким Email уже существует!')
+                data = [{'email': email, 'pwd': pwd, 'name': [surname, name, patron], 'position': pos}]
+                answer = self.api.add_users(data)
+                if not answer['ok']:
+                    self.label_error.setText('Неверный вид Email!')
+                elif answer['content']['add_users'][0]['ok']:
+                    row_pos = self.table.rowCount()
+                    last_row = self.api.get_all_users({"offset": -1, "length": row_pos+42})[0]
+                    self.api.del_users([last_row['_id']])
+                    self.table.insertRow(row_pos)
+                    self.table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(email))
+                    self.table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(surname))
+                    self.table.setItem(row_pos, 2, QtWidgets.QTableWidgetItem(name))
+                    self.table.setItem(row_pos, 3, QtWidgets.QTableWidgetItem(patron))
+                    self.table.setItem(row_pos, 4, QtWidgets.QTableWidgetItem(pos))
+                    self.list.extend(data)
+                    self.table.selectRow(row_pos)
+                    row = self.table.selectedItems()
+                    for x in row:
+                        x.setBackground(QColor(122, 255, 206))
+                    self.table.scrollToBottom()
+                    self.close()
+                else:
+                    self.label_error.setText('Пользователь с таким Email уже существует!')
+        else:
+            self.label_error.setText('Сервер недоступен!')
+            return 
 
 
     def cancel_button_click(self):
