@@ -28,6 +28,7 @@ class Ui_add_new_user_dialog(object):
         self.label_error.setStyleSheet("color: rgb(255, 0, 0);\n"
 "font-weight: bold;")
         self.label_error.setText("")
+        self.label_error.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.label_error.setObjectName("label_error")
         self.gridLayout.addWidget(self.label_error, 4, 0, 1, 3)
         spacerItem = QtWidgets.QSpacerItem(167, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
