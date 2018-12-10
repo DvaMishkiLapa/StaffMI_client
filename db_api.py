@@ -1,12 +1,7 @@
-import sqlite3
 import json
-import urllib.parse
 import requests
-
 host = 'https://pms.kmm-vsu.ru/'
-host_for_ping = 'pms.kmm-vsu.ru'
-email = 'pacan@1337.ru'
-pwd = '12345679'
+
 
 
 class API:

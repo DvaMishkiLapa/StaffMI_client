@@ -206,9 +206,6 @@ class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def save_projects_click(self):
         self.label_log_main.setText('')
         if self.api.get_all_users({"offset": 0, "length": 1}):
-            if not self.api.ping_server():
-                self.label_log_main.setText('Сервер недоступен!')
-                return 
             if self.project_rows_to_delete:
                 self.api.del_projects([self.projects_dict_links.get(obj) for obj in self.project_rows_to_delete])
                 self.project_rows_to_delete.clear()
@@ -351,21 +348,6 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
     def newpwd_button_click(self):
         self.login_stack.setCurrentIndex(1) # page_replace_login
 
-   # page_replace_login(2) button user login changes
-    def save_newlogin_button_click(self):
-        self.label_log_replogin.setText('')
-        if not self.api.ping_server():
-            self.label_log_replogin.setText('Сервер недоступен!')
-            return 
-        old_login = self.input_oldlogin.text()
-        pwd = self.input_pwd_replogin.text()
-        new_login = self.input_newlogin.text()
-        if old_login != new_login:
-            data = [{'user_unfo': {'login': old_login, 'pwd': pwd}, 'new_login': new_login}]
-            # self.api.edit_users(data)
-            print(data)
-        else:
-            self.error_replog.setText('Новый логин совпадает с текущим!')
 
     # page_replace_pwd(2) back button
     def back_login_button_click(self):
