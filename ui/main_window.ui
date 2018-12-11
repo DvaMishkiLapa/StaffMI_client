@@ -32,7 +32,7 @@
    <bool>true</bool>
   </property>
   <property name="windowTitle">
-   <string>peMI</string>
+   <string>StaffMI</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -666,53 +666,6 @@
         </item>
         <item row="3" column="0" colspan="5">
          <layout class="QGridLayout" name="gridLayout_4">
-          <item row="1" column="0">
-           <spacer name="horizontalSpacer_3">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="1" column="2">
-           <widget class="QLineEdit" name="output_size">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>50</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>50</width>
-              <height>16777215</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>50</string>
-            </property>
-            <property name="maxLength">
-             <number>10000</number>
-            </property>
-            <property name="frame">
-             <bool>true</bool>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="1">
            <widget class="QPushButton" name="page_left">
             <property name="sizePolicy">
@@ -729,6 +682,19 @@
               <normaloff>icons/left_arrow.png</normaloff>icons/left_arrow.png</iconset>
             </property>
            </widget>
+          </item>
+          <item row="1" column="4">
+           <spacer name="horizontalSpacer_4">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item row="1" column="3">
            <widget class="QPushButton" name="page_right">
@@ -753,8 +719,8 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="4">
-           <spacer name="horizontalSpacer_4">
+          <item row="1" column="0">
+           <spacer name="horizontalSpacer_3">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -765,6 +731,22 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label">
+            <property name="frameShape">
+             <enum>QFrame::Panel</enum>
+            </property>
+            <property name="text">
+             <string>0-100</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="margin">
+             <number>2</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -1144,7 +1126,6 @@ font-weight: bold;</string>
   <tabstop>workers_table</tabstop>
   <tabstop>current_projects_table</tabstop>
   <tabstop>page_left</tabstop>
-  <tabstop>output_size</tabstop>
   <tabstop>page_right</tabstop>
   <tabstop>scrollArea_2</tabstop>
   <tabstop>add_project</tabstop>

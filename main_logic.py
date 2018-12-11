@@ -14,7 +14,7 @@ import db_api
 
 
 # class responsible for the main window of working with the database
-class pemiWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
+class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def __init__(self, api):
         super().__init__()
         self.setupUi(self)
@@ -327,18 +327,18 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
                 with open('memory.json', 'w') as f:
                     f.write(json.dumps({'user_info':{'login': self.api.user, 'pwd': self.api.pwd}, 'flag': flag}))
                 self.destroy()
-                self.pemiWindow = pemiWindow(self.api)
-                self.pemiWindow.last_window = self
-                self.pemiWindow.show()
+                self.miWindow = miWindow(self.api)
+                self.miWindow.last_window = self
+                self.miWindow.show()
             else:
                 with open('memory.json', 'w') as f:
                     f.write(json.dumps({'user_info': {'login': '', 'pwd': ''}, 'flag': False}))
                 self.input_login.setText('')
                 self.input_pwd.setText('')
                 self.destroy()
-                self.pemiWindow = pemiWindow(self.api)
-                self.pemiWindow.last_window = self
-                self.pemiWindow.show()
+                self.miWindow = miWindow(self.api)
+                self.miWindow.last_window = self
+                self.miWindow.show()
         else:
             self.label_log_login.setText('Сервер недоступен!')
             return
