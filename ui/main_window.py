@@ -535,7 +535,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "peMI"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "StaffMI"))
         item = self.workers_table.horizontalHeaderItem(0)
         item.setText(_translate("MainWindow", "Email"))
         item = self.workers_table.horizontalHeaderItem(1)
