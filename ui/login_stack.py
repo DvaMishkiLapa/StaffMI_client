@@ -341,7 +341,7 @@ class Ui_login_dialog(object):
 
     def retranslateUi(self, login_dialog):
         _translate = QtCore.QCoreApplication.translate
-        login_dialog.setWindowTitle(_translate("login_dialog", "StaffMI"))
+        login_dialog.setWindowTitle(_translate("login_dialog", "peMI"))
         self.name_menu_login.setText(_translate("login_dialog", "Вход"))
         self.input_login.setToolTip(_translate("login_dialog", "<html><head/><body><p><br/></p></body></html>"))
         self.check_save_loginpwd.setText(_translate("login_dialog", "Запомнить"))
