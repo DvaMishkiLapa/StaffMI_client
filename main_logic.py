@@ -1,5 +1,6 @@
 import json
 import sys
+import hashlib
 
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
@@ -25,14 +26,15 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.worker_rows_were_changed = []
         self.unpacked_worker_rows_were_changed = [] # Сохранения данных других страниц
         self.new_worker_rows = []
+        self.old_data_workers_rows = []
 
         self.project_rows_to_delete = []
         self.project_rows_were_changed = []
         self.unpacked_project_rows_were_changed = [] # Сохранения данных других страниц
         self.new_project_rows = []
+        self.old_data_projects_rows = []
 
         self.workers_table_page = 0
-        self.projects_dict_links = {}
 
         self.update_workers()
         self.update_projects()
@@ -164,6 +166,12 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         if not self.worker_rows_to_delete.count(row.sibling(row.row(), 5).data()):
             table = row.model()
             index = row.row()
+            self.old_data_workers_rows.append({
+                '_id': row.sibling(index, 5).data(),
+                'email': row.sibling(index, 0).data(), 'pwd': '123456', # We are waiting for password corrections
+                'name': [row.sibling(index, 1).data(), row.sibling(index, 2).data(), row.sibling(index, 3).data()],
+                'position': row.sibling(index, 4).data()
+            })
             for x in range(0, 5):
                 table.setData(table.index(index, x), QColor(255, 253, 153), Qt.BackgroundRole)
             self.worker_rows_were_changed.append(row)
@@ -271,6 +279,11 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         if not self.project_rows_to_delete.count(row.sibling(row.row(), 2).data()):
             table = row.model()
             index = row.row()
+            self.old_data_projects_rows.append({
+                '_id': row.sibling(index, 2).data(),
+                'name': row.sibling(index, 0).data(), # We are waiting for password corrections
+                'deadline': row.sibling(index, 1).data()
+            })
             for x in range(0, 5):
                 table.setData(table.index(index, x), QColor(255, 253, 153), Qt.BackgroundRole)
             self.project_rows_were_changed.append(row)
@@ -278,9 +291,20 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
     def undo_changes_workers_table(self):
         self.worker_rows_to_delete.clear()
-        self.worker_rows_were_changed.clear()
         self.unpacked_worker_rows_were_changed.clear()
         self.workers_table.selectAll()
+        for item in self.worker_rows_were_changed:
+            row_id = item.sibling(item.row(), 5).data()
+            index = item.row()
+            for old_item in self.old_data_workers_rows:
+                if old_item['_id'] == row_id:
+                    self.workers_table.setItem(index, 0, QtWidgets.QTableWidgetItem(old_item['email']))
+                    for x in range(1, 4):
+                        self.workers_table.setItem(index, x, QtWidgets.QTableWidgetItem(old_item['name'][x-1]))
+                    self.workers_table.setItem(index, 4, QtWidgets.QTableWidgetItem(old_item['position']))
+                    break
+        self.worker_rows_were_changed.clear()
+        self.old_data_workers_rows.clear()
         rows = self.workers_table.selectedItems()
         for x in rows:
             x.setBackground(QColor(255, 255, 255))
@@ -291,9 +315,19 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
     def undo_changes_projects_table(self):
         self.project_rows_to_delete.clear()
-        self.project_rows_were_changed.clear()
         self.unpacked_project_rows_were_changed.clear()
         self.projects_table.selectAll()
+        for item in self.project_rows_were_changed:
+            row_id = item.sibling(item.row(), 2).data()
+            index = item.row()
+            for old_item in self.old_data_projects_rows:
+
+                if old_item['_id'] == row_id:
+                    self.projects_table.setItem(index, 0, QtWidgets.QTableWidgetItem(old_item['name']))
+                    self.projects_table.setItem(index, 1, QtWidgets.QTableWidgetItem(old_item['deadline']))
+                    break
+        self.project_rows_were_changed.clear()
+        self.old_data_projects_rows.clear()
         rows = self.projects_table.selectedItems()
         for x in rows:
             x.setBackground(QColor(255, 255, 255))

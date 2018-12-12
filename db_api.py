@@ -25,7 +25,6 @@ class API:
         data = json.dumps({"requests": args, 'token': self.token})
         try:
             response = requests.post(host, data=data).json()
-            # print(response)
         except requests.exceptions.ConnectionError:
             return False
         try:
