@@ -20,16 +20,19 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.setupUi(self)
 
         self.api = api
+
         self.worker_rows_to_delete = []
         self.worker_rows_were_changed = []
+        self.unpacked_worker_rows_were_changed = [] # Сохранения данных других страниц
         self.new_worker_rows = []
+
         self.project_rows_to_delete = []
         self.project_rows_were_changed = []
+        self.unpacked_project_rows_were_changed = [] # Сохранения данных других страниц
         self.new_project_rows = []
 
-        self.workers_dict_links = {}
+        self.workers_table_page = 0
         self.projects_dict_links = {}
-        # self.list_row_wc =[] # Сохранения данных других страниц
 
         self.update_workers()
         self.update_projects()
@@ -46,7 +49,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.save_inprojects.clicked.connect(self.save_inprojects_click)
 
         self.add_project.clicked.connect(self.add_project_click)
-        # self.add_project.clicked.connect(self.projects_table.scrollToBottom)
         self.del_project.clicked.connect(self.del_project_click)
         self.save_projects.clicked.connect(self.save_projects_click)
         self.projects_table.doubleClicked.connect(self.changed_cell_projects_table)
@@ -60,10 +62,19 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.update_data.clicked.connect(self.update_workers_table_click)
         self.update_data_2.clicked.connect(self.update_projects_table_click)
 
+        self.full_left.clicked.connect(self.full_left_click)
+        self.page_left.clicked.connect(self.page_left_click)
+        self.page_right.clicked.connect(self.page_right_click)
+        self.full_right.clicked.connect(self.full_right_click)
+        self.size_page.editingFinished.connect(self.full_left_click)
+
+        self.workers_table.setColumnHidden(5, True)
+        self.projects_table.setColumnHidden(2, True)
+
 
     def update_workers(self):
         self.label_log_main.setText('')
-        answer = self.api.get_all_users({"offset": 0, "length": 100})
+        answer = self.api.get_all_users({"offset": self.workers_table_page, "length": int(self.size_page.text())})
         if answer:
             self.workers_table.clearContents()
             self.workers_table.setRowCount(0)
@@ -74,9 +85,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                 for x in range(1, 4):
                     self.workers_table.setItem(row_pos, x, QtWidgets.QTableWidgetItem(worker['name'][x-1]))
                 self.workers_table.setItem(row_pos, 4, QtWidgets.QTableWidgetItem(worker['position']))
-                self.workers_table.selectAll()
-                selected_rows = self.workers_table.selectionModel().selectedRows()
-                self.workers_dict_links.update({selected_rows[-1]: worker['_id']})
+                self.workers_table.setItem(row_pos, 5, QtWidgets.QTableWidgetItem(worker['_id']))
         else:
             self.label_log_main.setText('Сервер недоступен!')
             return
@@ -84,7 +93,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
     def update_projects(self):
         self.label_log_main.setText('')
-        answer = self.api.get_all_projects({"offset": 0, "length": 100})
+        answer = self.api.get_all_projects({"offset": self.workers_table_page, "length": 1000})
         if answer:
             self.projects_table.clearContents()
             self.projects_table.setRowCount(0)
@@ -93,12 +102,20 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                 self.projects_table.insertRow(row_pos)
                 self.projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(project['name']))
                 self.projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(project['deadline']))
-                self.projects_table.selectAll()
-                selected_rows = self.projects_table.selectionModel().selectedRows()
-                self.projects_dict_links.update({selected_rows[-1]: project['_id']})
+                self.projects_table.setItem(row_pos, 2, QtWidgets.QTableWidgetItem(project['_id']))
         else:
             self.label_log_main.setText('Сервер недоступен!')
             return
+
+
+    def unpacked_worker_changed(self):
+        for obj in self.worker_rows_were_changed:
+            self.unpacked_worker_rows_were_changed.append({
+                '_id': obj.sibling(obj.row(), 5).data(),
+                'email': obj.sibling(obj.row(), 0).data(), 'pwd': '123456', # We are waiting for password corrections
+                'name': [obj.sibling(obj.row(), 1).data(), obj.sibling(obj.row(), 2).data(), obj.sibling(obj.row(), 3).data()],
+                'position': obj.sibling(obj.row(), 4).data()
+            })
 
 
     def add_worker_click(self):
@@ -111,12 +128,13 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         for row in selected_rows:
             table = row.model()
             index = row.row()
+            row_id = row.sibling(row.row(), 5).data()
             try:
-                self.worker_rows_to_delete.remove(row)
+                self.worker_rows_to_delete.remove(row_id)
                 for x in range(0, 5):
                     table.setData(table.index(index, x), QColor(255, 255, 255), Qt.BackgroundRole)
             except ValueError:
-                self.worker_rows_to_delete.append(row)
+                self.worker_rows_to_delete.append(row_id)
                 for x in range(0, 5):
                     table.setData(table.index(index, x), QColor(255, 127, 127), Qt.BackgroundRole)
 
@@ -125,21 +143,15 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.label_log_main.setText('')
         if self.api.get_all_users({"offset": 0, "length": 1}):
             if self.worker_rows_to_delete:
-                self.api.del_users([self.workers_dict_links.get(obj) for obj in self.worker_rows_to_delete])
+                self.api.del_users(self.worker_rows_to_delete)
                 self.worker_rows_to_delete.clear()
             if self.new_worker_rows:
                 self.api.add_users(self.new_worker_rows)
                 self.new_worker_rows.clear()
-            if self.worker_rows_were_changed:
-                list_changed_rows = []
-                for obj in self.worker_rows_were_changed:
-                    list_changed_rows.append({
-                        '_id': self.workers_dict_links.get(obj),
-                        'email': obj.sibling(obj.row(), 0).data(), 'pwd': '123456', # We are waiting for password corrections
-                        'name': [obj.sibling(obj.row(), 1).data(), obj.sibling(obj.row(), 2).data(), obj.sibling(obj.row(), 3).data()],
-                        'position': obj.sibling(obj.row(), 4).data()
-                        })
-                self.api.edit_users(list_changed_rows)
+            self.unpacked_worker_changed()
+            if self.unpacked_worker_rows_were_changed:
+                self.api.edit_users(self.unpacked_worker_rows_were_changed)
+                self.unpacked_worker_rows_were_changed.clear()
                 self.worker_rows_were_changed.clear()
             self.update_workers()
         else:
@@ -148,12 +160,13 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def changed_cell_workers_table(self):
-        list_delete_worker_rows = [obj.sibling(obj.row(), 0).data() for obj in self.worker_rows_to_delete]
-        selected_row = self.workers_table.selectedItems()
-        if not list_delete_worker_rows.count(selected_row[0].text()):
-            for obj in selected_row:
-                obj.setBackground(QColor(255, 253, 153))
-            self.worker_rows_were_changed.extend(self.workers_table.selectionModel().selectedRows())
+        row = self.workers_table.selectionModel().selectedRows()[0]
+        if not self.worker_rows_to_delete.count(row.sibling(row.row(), 5).data()):
+            table = row.model()
+            index = row.row()
+            for x in range(0, 5):
+                table.setData(table.index(index, x), QColor(255, 253, 153), Qt.BackgroundRole)
+            self.worker_rows_were_changed.append(row)
 
 
     def new_inproject_click(self):
@@ -193,17 +206,42 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         for row in selected_rows:
             table = row.model()
             index = row.row()
+            row_id = row.sibling(row.row(), 2).data()
             try:
-                self.project_rows_to_delete.remove(row)
+                self.project_rows_to_delete.remove(row_id)
                 for x in range(0, 5):
                     table.setData(table.index(index, x), QColor(255, 255, 255), Qt.BackgroundRole)
             except ValueError:
-                self.project_rows_to_delete.append(row)
+                self.project_rows_to_delete.append(row_id)
                 for x in range(0, 5):
                     table.setData(table.index(index, x), QColor(255, 127, 127), Qt.BackgroundRole)
 
 
     def save_projects_click(self):
+        self.label_log_main.setText('')
+        if self.api.get_all_users({"offset": 0, "length": 1}):
+            if self.project_rows_to_delete:
+                self.api.del_projects(self.project_rows_to_delete)
+                self.project_rows_to_delete.clear()
+            if self.new_project_rows:
+                self.api.add_projects(self.new_project_rows)
+                self.new_project_rows.clear()
+            for obj in self.project_rows_were_changed:
+                self.unpacked_project_rows_were_changed.append({
+                    '_id': obj.sibling(obj.row(), 2).data(),
+                    'name': obj.sibling(obj.row(), 0).data(),
+                    'deadline': obj.sibling(obj.row(), 1).data()
+                })
+            if self.unpacked_project_rows_were_changed:
+                self.api.edit_projects(self.unpacked_project_rows_were_changed)
+                self.unpacked_project_rows_were_changed.clear()
+                self.project_rows_were_changed.clear()
+            self.update_projects()
+        else:
+            self.label_log_main.setText('Сервер недоступен!')
+            return
+
+
         self.label_log_main.setText('')
         if self.api.get_all_users({"offset": 0, "length": 1}):
             if self.project_rows_to_delete:
@@ -229,17 +267,19 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def changed_cell_projects_table(self):
-        list_delete_project_rows = [[obj.sibling(obj.row(), 0).data() for obj in self.project_rows_to_delete]]
-        selected_row = self.projects_table.selectedItems()
-        if not list_delete_project_rows.count(selected_row[0].text()):
-            for obj in selected_row:
-                obj.setBackground(QColor(255, 253, 153))
-            self.project_rows_were_changed.extend(self.projects_table.selectionModel().selectedRows())
+        row = self.projects_table.selectionModel().selectedRows()[0]
+        if not self.project_rows_to_delete.count(row.sibling(row.row(), 2).data()):
+            table = row.model()
+            index = row.row()
+            for x in range(0, 5):
+                table.setData(table.index(index, x), QColor(255, 253, 153), Qt.BackgroundRole)
+            self.project_rows_were_changed.append(row)
 
 
     def undo_changes_workers_table(self):
         self.worker_rows_to_delete.clear()
         self.worker_rows_were_changed.clear()
+        self.unpacked_worker_rows_were_changed.clear()
         self.workers_table.selectAll()
         rows = self.workers_table.selectedItems()
         for x in rows:
@@ -252,6 +292,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def undo_changes_projects_table(self):
         self.project_rows_to_delete.clear()
         self.project_rows_were_changed.clear()
+        self.unpacked_project_rows_were_changed.clear()
         self.projects_table.selectAll()
         rows = self.projects_table.selectedItems()
         for x in rows:
@@ -278,6 +319,38 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
     def update_projects_table_click(self):
         self.update_projects()
+
+
+    def page_left_click(self):
+        self.unpacked_worker_changed()
+        self.worker_rows_were_changed.clear()
+        self.workers_table_page -= int(self.size_page.text())
+        self.update_workers()
+        if not self.workers_table_page:
+            self.full_left.setEnabled(False)
+            self.page_left.setEnabled(False)
+
+
+    def page_right_click(self):
+        self.unpacked_worker_changed()
+        self.worker_rows_were_changed.clear()
+        self.workers_table_page += int(self.size_page.text())
+        self.update_workers()
+        self.full_left.setEnabled(True)
+        self.page_left.setEnabled(True)
+
+
+    def full_left_click(self):
+        self.unpacked_worker_changed()
+        self.worker_rows_were_changed.clear()
+        self.workers_table_page = 0
+        self.update_workers()
+        self.full_left.setEnabled(False)
+        self.page_left.setEnabled(False)
+
+
+    def full_right_click(self):
+        print('full_right_click')
 
     # [X]
     def closeEvent(self, event):
