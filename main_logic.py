@@ -114,7 +114,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         for obj in self.worker_rows_were_changed:
             self.unpacked_worker_rows_were_changed.append({
                 '_id': obj.sibling(obj.row(), 5).data(),
-                'email': obj.sibling(obj.row(), 0).data(), 'pwd': '123456', # We are waiting for password corrections
+                'email': obj.sibling(obj.row(), 0).data(),
                 'name': [obj.sibling(obj.row(), 1).data(), obj.sibling(obj.row(), 2).data(), obj.sibling(obj.row(), 3).data()],
                 'position': obj.sibling(obj.row(), 4).data()
             })
@@ -462,11 +462,7 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
 
     # page_replace_pwd(2) button user pwd changes
     def save_newpwd_button_click(self):
-        pass
         # self.label_log_reppwd.setText('')
-        # if not self.api.ping_server():
-        #     self.label_log_reppwd.setText('Сервер недоступен!')
-        #     return 
         # login = self.input_login_reppwd.text()
         # old_pwd = self.input_oldpwd.text()
         # new_pwd = self.input_newpwd.text()
