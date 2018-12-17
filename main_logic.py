@@ -462,21 +462,21 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
 
     # page_replace_pwd(2) button user pwd changes
     def save_newpwd_button_click(self):
-        # self.label_log_reppwd.setText('')
-        # login = self.input_login_reppwd.text()
-        # old_pwd = self.input_oldpwd.text()
-        # new_pwd = self.input_newpwd.text()
-        # if old_pwd != new_pwd:
-        #     answer = self.api.change_password({'email': login, 'old_pwd': old_pwd, 'new_pwd': new_pwd})
-        #     if answer:
-        #         self.error_reppwd.setStyleSheet("color: rgb(75, 225, 0);; font-weight: bold;")
-        #         self.error_reppwd.setText('Пароль успешно изменен')
-        #     else:
-        #         self.error_reppwd.setStyleSheet("color: rgb(255, 0, 0);; font-weight: bold;")
-        #         self.error_reppwd.setText('Неверный логин или пароль!')
-        # else:
-        #     self.error_reppwd.setStyleSheet("color: rgb(255, 0, 0);; font-weight: bold;")
-        #     self.error_reppwd.setText('Новый пароль совпадает с текущим!')
+        self.label_log_reppwd.setText('')
+        login = self.input_login_reppwd.text()
+        old_pwd = self.input_oldpwd.text()
+        new_pwd = self.input_newpwd.text()
+        if old_pwd != new_pwd:
+            answer = self.api.change_password({"email": login, "old_pwd": old_pwd, "new_pwd": new_pwd})
+            if answer == "Password has been changed.":
+                self.error_reppwd.setStyleSheet("color: rgb(75, 225, 0);; font-weight: bold;")
+                self.error_reppwd.setText('Пароль успешно изменен')
+            else:
+                self.error_reppwd.setStyleSheet("color: rgb(255, 0, 0);; font-weight: bold;")
+                self.error_reppwd.setText('Неверный логин или пароль!')
+        else:
+            self.error_reppwd.setStyleSheet("color: rgb(255, 0, 0);; font-weight: bold;")
+            self.error_reppwd.setText('Новый пароль совпадает с текущим!')
 
     # [X]
     def closeEvent(self, event):
