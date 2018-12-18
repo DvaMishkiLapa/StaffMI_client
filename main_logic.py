@@ -356,35 +356,51 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def page_left_click(self):
-        self.unpacked_worker_changed()
-        self.worker_rows_were_changed.clear()
         self.workers_table_page -= int(self.size_page.text())
-        self.update_workers()
+        self.full_right.setEnabled(True)
+        self.page_right.setEnabled(True)
         if not self.workers_table_page:
             self.full_left.setEnabled(False)
             self.page_left.setEnabled(False)
+        self.unpacked_worker_changed()
+        self.worker_rows_were_changed.clear()
+        self.update_workers()
 
 
     def page_right_click(self):
-        self.unpacked_worker_changed()
-        self.worker_rows_were_changed.clear()
         self.workers_table_page += int(self.size_page.text())
-        self.update_workers()
+        if self.api.get_users_count() - self.workers_table_page < int(self.size_page.text()):
+            self.full_right.setEnabled(False)
+            self.page_right.setEnabled(False)
         self.full_left.setEnabled(True)
         self.page_left.setEnabled(True)
+        self.unpacked_worker_changed()
+        self.worker_rows_were_changed.clear()
+        self.update_workers()
 
 
     def full_left_click(self):
-        self.unpacked_worker_changed()
-        self.worker_rows_were_changed.clear()
         self.workers_table_page = 0
-        self.update_workers()
         self.full_left.setEnabled(False)
         self.page_left.setEnabled(False)
+        self.full_right.setEnabled(True)
+        self.page_right.setEnabled(True)
+        self.unpacked_worker_changed()
+        self.worker_rows_were_changed.clear()
+        self.update_workers()
 
 
     def full_right_click(self):
-        print('full_right_click')
+        size = self.api.get_users_count()
+        self.workers_table_page = size - size % int(self.size_page.text())
+        self.full_right.setEnabled(False)
+        self.page_right.setEnabled(False)
+        self.full_left.setEnabled(True)
+        self.page_left.setEnabled(True)
+        self.unpacked_worker_changed()
+        self.worker_rows_were_changed.clear()
+        self.update_workers()
+
 
     # [X]
     def closeEvent(self, event):

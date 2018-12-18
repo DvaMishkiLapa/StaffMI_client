@@ -82,6 +82,10 @@ class API:
         return self.send_query({"change_password": args})
 
 
+    def get_users_count(self):
+        return self.send_query({"get_users_count": {}})
+
+
     # def get_users_projects(self, ):
     #     return self.send_query({}, 'get_users_projects')
 
