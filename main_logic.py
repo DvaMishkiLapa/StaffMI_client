@@ -178,19 +178,29 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def new_inproject_click(self):
-        answer = self.api.get_all_projects({"offset": 0, "length": 100})
-        if answer:
-            chose_dialog = inprojectDialogWindow(answer)
-            chose_dialog.exec_()
-            answer = chose_dialog.answer
-            if answer != None:
-                row_pos = self.current_projects_table.rowCount()
-                self.current_projects_table.insertRow(row_pos)
-                self.current_projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(answer[0]))
-                self.current_projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(answer[1]))
-        else:
-            self.label_log_main.setText('Сервер недоступен!')
-            return
+        rows = self.workers_table.selectionModel().selectedRows()
+        if rows:
+            answer = self.api.get_all_projects({"offset": 0, "length": 100})
+            if answer:
+                chose_dialog = inprojectDialogWindow(answer)
+                chose_dialog.exec_()
+                answer_user = chose_dialog.answer
+                if answer_user:
+                    data = []
+                    for item in rows:
+                        index = item.row()
+                        data.append({
+                            "email": item.sibling(index, 0).data(),
+                            "project": answer_user[0].text()
+                        })
+                    self.api.assign_to_projects(data)
+                    row_pos = self.current_projects_table.rowCount()
+                    self.current_projects_table.insertRow(row_pos)
+                    self.current_projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(answer_user[0]))
+                    self.current_projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(answer_user[1]))
+            else:
+                self.label_log_main.setText('Сервер недоступен!')
+                return
 
 
     def del_inproject_click(self):
@@ -321,7 +331,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             row_id = item.sibling(item.row(), 2).data()
             index = item.row()
             for old_item in self.old_data_projects_rows:
-
                 if old_item['_id'] == row_id:
                     self.projects_table.setItem(index, 0, QtWidgets.QTableWidgetItem(old_item['name']))
                     self.projects_table.setItem(index, 1, QtWidgets.QTableWidgetItem(old_item['deadline']))
@@ -524,6 +533,7 @@ class inprojectDialogWindow(QtWidgets.QDialog, add_inproject_dialog.Ui_add_inpro
 
 
     def cancel_button_click(self):
+        self.answer = False
         self.close()
 
 

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '.\ui\add_inproject_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.2
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -43,6 +43,7 @@ class Ui_add_inproject_dialog(object):
         self.line.setObjectName("line")
         self.gridLayout.addWidget(self.line, 1, 0, 1, 3)
         self.table_projects = QtWidgets.QTableWidget(add_inproject_dialog)
+        self.table_projects.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.table_projects.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.table_projects.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.table_projects.setObjectName("table_projects")

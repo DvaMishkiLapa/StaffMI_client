@@ -1192,7 +1192,7 @@ font-weight: bold;</string>
   </widget>
  </widget>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
+  <tabstop>projects_table</tabstop>
   <tabstop>scrollArea</tabstop>
   <tabstop>add_worker</tabstop>
   <tabstop>del_worker</tabstop>
@@ -1205,11 +1205,15 @@ font-weight: bold;</string>
   <tabstop>update_data</tabstop>
   <tabstop>settings</tabstop>
   <tabstop>logout</tabstop>
+  <tabstop>full_left</tabstop>
+  <tabstop>page_left</tabstop>
+  <tabstop>scrollArea_2</tabstop>
+  <tabstop>page_right</tabstop>
+  <tabstop>full_right</tabstop>
   <tabstop>workers_table</tabstop>
   <tabstop>current_projects_table</tabstop>
-  <tabstop>page_left</tabstop>
-  <tabstop>page_right</tabstop>
-  <tabstop>scrollArea_2</tabstop>
+  <tabstop>size_page</tabstop>
+  <tabstop>tabWidget</tabstop>
   <tabstop>add_project</tabstop>
   <tabstop>del_project</tabstop>
   <tabstop>save_projects</tabstop>
@@ -1217,7 +1221,6 @@ font-weight: bold;</string>
   <tabstop>update_data_2</tabstop>
   <tabstop>settings_2</tabstop>
   <tabstop>logout_2</tabstop>
-  <tabstop>projects_table</tabstop>
  </tabstops>
  <resources/>
  <connections/>

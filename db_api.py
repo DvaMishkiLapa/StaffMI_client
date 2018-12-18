@@ -85,6 +85,9 @@ class API:
     def get_users_count(self):
         return self.send_query({"get_users_count": {}})
 
+    def assign_to_projects(self, args):
+        return self.send_query({"assign_to_projects": args})
+
 
     # def get_users_projects(self, ):
     #     return self.send_query({}, 'get_users_projects')

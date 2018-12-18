@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '.\ui\main_window.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.2
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -540,7 +540,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        MainWindow.setTabOrder(self.tabWidget, self.scrollArea)
+        MainWindow.setTabOrder(self.projects_table, self.scrollArea)
         MainWindow.setTabOrder(self.scrollArea, self.add_worker)
         MainWindow.setTabOrder(self.add_worker, self.del_worker)
         MainWindow.setTabOrder(self.del_worker, self.save_workers)
@@ -552,19 +552,22 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.undo_changes_workers, self.update_data)
         MainWindow.setTabOrder(self.update_data, self.settings)
         MainWindow.setTabOrder(self.settings, self.logout)
-        MainWindow.setTabOrder(self.logout, self.workers_table)
+        MainWindow.setTabOrder(self.logout, self.full_left)
+        MainWindow.setTabOrder(self.full_left, self.page_left)
+        MainWindow.setTabOrder(self.page_left, self.scrollArea_2)
+        MainWindow.setTabOrder(self.scrollArea_2, self.page_right)
+        MainWindow.setTabOrder(self.page_right, self.full_right)
+        MainWindow.setTabOrder(self.full_right, self.workers_table)
         MainWindow.setTabOrder(self.workers_table, self.current_projects_table)
-        MainWindow.setTabOrder(self.current_projects_table, self.page_left)
-        MainWindow.setTabOrder(self.page_left, self.page_right)
-        MainWindow.setTabOrder(self.page_right, self.scrollArea_2)
-        MainWindow.setTabOrder(self.scrollArea_2, self.add_project)
+        MainWindow.setTabOrder(self.current_projects_table, self.size_page)
+        MainWindow.setTabOrder(self.size_page, self.tabWidget)
+        MainWindow.setTabOrder(self.tabWidget, self.add_project)
         MainWindow.setTabOrder(self.add_project, self.del_project)
         MainWindow.setTabOrder(self.del_project, self.save_projects)
         MainWindow.setTabOrder(self.save_projects, self.undo_changes_projects)
         MainWindow.setTabOrder(self.undo_changes_projects, self.update_data_2)
         MainWindow.setTabOrder(self.update_data_2, self.settings_2)
         MainWindow.setTabOrder(self.settings_2, self.logout_2)
-        MainWindow.setTabOrder(self.logout_2, self.projects_table)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
