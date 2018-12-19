@@ -12,9 +12,9 @@ class Ui_add_inproject_dialog(object):
     def setupUi(self, add_inproject_dialog):
         add_inproject_dialog.setObjectName("add_inproject_dialog")
         add_inproject_dialog.setWindowModality(QtCore.Qt.NonModal)
-        add_inproject_dialog.resize(350, 275)
-        add_inproject_dialog.setMinimumSize(QtCore.QSize(350, 275))
-        add_inproject_dialog.setMaximumSize(QtCore.QSize(350, 275))
+        add_inproject_dialog.resize(550, 350)
+        add_inproject_dialog.setMinimumSize(QtCore.QSize(550, 350))
+        add_inproject_dialog.setMaximumSize(QtCore.QSize(550, 350))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("ui/icons/title.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         add_inproject_dialog.setWindowIcon(icon)
@@ -53,7 +53,7 @@ class Ui_add_inproject_dialog(object):
         self.table_projects.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
         self.table_projects.setHorizontalHeaderItem(1, item)
-        self.table_projects.horizontalHeader().setDefaultSectionSize(120)
+        self.table_projects.horizontalHeader().setDefaultSectionSize(255)
         self.gridLayout.addWidget(self.table_projects, 2, 0, 1, 3)
 
         self.retranslateUi(add_inproject_dialog)

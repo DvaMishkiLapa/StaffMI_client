@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file '.\ui\add_new_project_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.2
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -15,7 +15,7 @@ class Ui_add_new_project_dialog(object):
         add_new_project_dialog.setMinimumSize(QtCore.QSize(350, 300))
         add_new_project_dialog.setMaximumSize(QtCore.QSize(350, 300))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("ui/icons/title.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("iconstitle.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         add_new_project_dialog.setWindowIcon(icon)
         self.gridLayout = QtWidgets.QGridLayout(add_new_project_dialog)
         self.gridLayout.setObjectName("gridLayout")

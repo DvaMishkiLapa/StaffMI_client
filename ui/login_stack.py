@@ -171,7 +171,7 @@ class Ui_login_dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.login_button.sizePolicy().hasHeightForWidth())
         self.login_button.setSizePolicy(sizePolicy)
-        self.login_button.setMinimumSize(QtCore.QSize(0, 18))
+        self.login_button.setMinimumSize(QtCore.QSize(0, 23))
         self.login_button.setObjectName("login_button")
         self.gridLayout_3.addWidget(self.login_button, 0, 1, 1, 1)
         spacerItem6 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)

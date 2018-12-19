@@ -9,20 +9,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
-    <height>275</height>
+    <width>550</width>
+    <height>350</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>350</width>
-    <height>275</height>
+    <width>550</width>
+    <height>350</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>350</width>
-    <height>275</height>
+    <width>550</width>
+    <height>350</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -95,7 +95,7 @@
       <enum>QAbstractItemView::SelectRows</enum>
      </property>
      <attribute name="horizontalHeaderDefaultSectionSize">
-      <number>120</number>
+      <number>255</number>
      </attribute>
      <column>
       <property name="text">
