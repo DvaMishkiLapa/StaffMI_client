@@ -78,12 +78,14 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def update_workers(self):
-        self.user_projects.clear()
         self.label_log_main.setText('')
         answer = self.api.get_all_users({"offset": self.workers_table_page, "length": int(self.size_page.text())})
         if answer:
+            self.user_projects.clear()
             self.workers_table.clearContents()
             self.workers_table.setRowCount(0)
+            self.current_projects_table.clearContents()
+            self.current_projects_table.setRowCount(0)
             for worker in answer:
                 self.user_projects.update({worker["email"]: worker["projects"]})
                 row_pos = self.workers_table.rowCount()
@@ -259,30 +261,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             if self.unpacked_project_rows_were_changed:
                 self.api.edit_projects(self.unpacked_project_rows_were_changed)
                 self.unpacked_project_rows_were_changed.clear()
-                self.project_rows_were_changed.clear()
-            self.update_projects()
-        else:
-            self.label_log_main.setText('Сервер недоступен!')
-            return
-
-
-        self.label_log_main.setText('')
-        if self.api.get_all_users({"offset": 0, "length": 1}):
-            if self.project_rows_to_delete:
-                self.api.del_projects([self.projects_dict_links.get(obj) for obj in self.project_rows_to_delete])
-                self.project_rows_to_delete.clear()
-            if self.new_project_rows:
-                self.api.add_projects(self.new_project_rows)
-                self.new_project_rows.clear()
-            if self.project_rows_were_changed:
-                list_changed_rows = []
-                for obj in self.project_rows_were_changed:
-                    list_changed_rows.append({
-                        '_id': self.projects_dict_links.get(obj),
-                        'name': obj.sibling(obj.row(), 0).data(),
-                        'deadline': obj.sibling(obj.row(), 1).data()
-                        })
-                self.api.edit_projects(list_changed_rows)
                 self.project_rows_were_changed.clear()
             self.update_projects()
         else:
