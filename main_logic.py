@@ -34,6 +34,8 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.new_project_rows = []
         self.old_data_projects_rows = []
 
+        self.user_projects = {}
+
         self.workers_table_page = 0
 
         self.update_workers()
@@ -44,6 +46,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.del_worker.clicked.connect(self.del_worker_click)
         self.save_workers.clicked.connect(self.save_workers_click)
         self.workers_table.doubleClicked.connect(self.changed_cell_workers_table)
+        self.workers_table.itemClicked.connect(self.show_user_projects)
 
         self.new_inproject.clicked.connect(self.new_inproject_click)
         self.new_inproject.clicked.connect(self.current_projects_table.scrollToBottom)
@@ -75,12 +78,14 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def update_workers(self):
+        self.user_projects.clear()
         self.label_log_main.setText('')
         answer = self.api.get_all_users({"offset": self.workers_table_page, "length": int(self.size_page.text())})
         if answer:
             self.workers_table.clearContents()
             self.workers_table.setRowCount(0)
             for worker in answer:
+                self.user_projects.update({worker["email"]: worker["projects"]})
                 row_pos = self.workers_table.rowCount()
                 self.workers_table.insertRow(row_pos)
                 self.workers_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(worker['email']))
@@ -198,6 +203,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                     self.current_projects_table.insertRow(row_pos)
                     self.current_projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(answer_user[0]))
                     self.current_projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(answer_user[1]))
+                    self.update_workers()
             else:
                 self.label_log_main.setText('Сервер недоступен!')
                 return
@@ -350,6 +356,17 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.current_projects_table.clear()
         self.destroy()
         self.last_window.show()
+
+    def show_user_projects(self, item):
+        self.current_projects_table.clearContents()
+        self.current_projects_table.setRowCount(0)
+        row = self.workers_table.selectionModel().selectedRows()[0]
+        email = row.sibling(row.row(), 0).data()
+        for project in self.user_projects[email]:
+            row_pos = self.current_projects_table.rowCount()
+            self.current_projects_table.insertRow(row_pos)
+            self.current_projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(project["name"]))
+            self.current_projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(project["deadline"]))
 
 
     def settings_click(self):

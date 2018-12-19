@@ -33,9 +33,7 @@ class API:
                 data = json.dumps({"requests": args, 'token': self.token})
                 response = requests.post(host, data=data).json()
         except (KeyError, requests.exceptions.ConnectionError) as e:
-            if e == KeyError:
-                pass
-            elif e == requests.exceptions.ConnectionError:
+            if e == requests.exceptions.ConnectionError:
                 return False
         if not (len(args) == 1):
             pass
