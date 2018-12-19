@@ -76,6 +76,8 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
 
     def update_workers(self):
+        # index_list = [str(item) for item in range(self.workers_table_page, self.workers_table_page + int(self.size_page.text())+1)]
+        # self.workers_table.setVerticalHeaderLabels(index_list)
         self.label_log_main.setText('')
         answer = self.api.get_all_users({"offset": self.workers_table_page, "length": int(self.size_page.text())})
         if answer:
@@ -199,12 +201,12 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                             "email": email,
                             "project": answer_user[0].text()
                         })
+                        self.user_projects[email].append({"name": answer_user[0].text(), "deadline": answer_user[1].text()})
                     self.api.assign_to_projects(data)
                     row_pos = self.current_projects_table.rowCount()
                     self.current_projects_table.insertRow(row_pos)
                     self.current_projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(answer_user[0]))
                     self.current_projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(answer_user[1]))
-                    self.user_projects[email].append({"name": answer_user[0].text(), "deadline": answer_user[1].text()})
             else:
                 self.label_log_main.setText('Сервер недоступен!')
                 return
