@@ -196,8 +196,9 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                     data = []
                     for item in rows:
                         index = item.row()
+                        email = item.sibling(index, 0).data()
                         data.append({
-                            "email": item.sibling(index, 0).data(),
+                            "email": email,
                             "project": answer_user[0].text()
                         })
                     self.api.assign_to_projects(data)
@@ -205,7 +206,8 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                     self.current_projects_table.insertRow(row_pos)
                     self.current_projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(answer_user[0]))
                     self.current_projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(answer_user[1]))
-                    self.update_workers()
+                    self.user_projects[email].append({"name": answer_user[0].text(), "deadline": answer_user[1].text()})
+                    print(self.user_projects)
             else:
                 self.label_log_main.setText('Сервер недоступен!')
                 return
@@ -213,7 +215,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
     def del_inproject_click(self):
         selected_row = self.current_projects_table.selectionModel().selectedRows()
-        while len(selected_row):
+        for row in selected_row:
             self.current_projects_table.removeRow(selected_row[-1].row())
             selected_row.pop()
 
@@ -335,7 +337,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.destroy()
         self.last_window.show()
 
-    def show_user_projects(self, item):
+    def show_user_projects(self):
         self.current_projects_table.clearContents()
         self.current_projects_table.setRowCount(0)
         row = self.workers_table.selectionModel().selectedRows()[0]
