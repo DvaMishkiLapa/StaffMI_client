@@ -87,6 +87,9 @@ class API:
         return self.send_query({"assign_to_projects": args})
 
 
+    def remove_from_projects(self, args):
+        return self.send_query({"remove_from_projects": args})
+
     # def get_users_projects(self, ):
     #     return self.send_query({}, 'get_users_projects')
 

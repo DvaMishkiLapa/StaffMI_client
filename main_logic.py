@@ -35,6 +35,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.old_data_projects_rows = []
 
         self.user_projects = {}
+        self.clicked_worker_row = None
 
         self.workers_table_page = 0
 
@@ -207,7 +208,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                     self.current_projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(answer_user[0]))
                     self.current_projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(answer_user[1]))
                     self.user_projects[email].append({"name": answer_user[0].text(), "deadline": answer_user[1].text()})
-                    print(self.user_projects)
             else:
                 self.label_log_main.setText('Сервер недоступен!')
                 return
@@ -215,9 +215,21 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
     def del_inproject_click(self):
         selected_row = self.current_projects_table.selectionModel().selectedRows()
+        request = []
         for row in selected_row:
-            self.current_projects_table.removeRow(selected_row[-1].row())
-            selected_row.pop()
+            name = row.sibling(row.row(), 0).data()
+            request.append({
+                "email": self.clicked_worker_row,
+                "project": name
+            })
+            for item in self.user_projects[self.clicked_worker_row]:
+                if item["name"] == name and item["deadline"] == row.sibling(row.row(), 1).data():
+                    self.user_projects[self.clicked_worker_row].remove(item)
+        list_index_rows = sorted([i.row() for i in selected_row])
+        while len(list_index_rows):
+            self.current_projects_table.removeRow(list_index_rows[-1])
+            list_index_rows.pop()
+        self.api.remove_from_projects(request)
 
 
     def save_inprojects_click(self):
@@ -341,8 +353,8 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.current_projects_table.clearContents()
         self.current_projects_table.setRowCount(0)
         row = self.workers_table.selectionModel().selectedRows()[0]
-        email = row.sibling(row.row(), 0).data()
-        for project in self.user_projects[email]:
+        self.clicked_worker_row = row.sibling(row.row(), 0).data()
+        for project in self.user_projects[self.clicked_worker_row]:
             row_pos = self.current_projects_table.rowCount()
             self.current_projects_table.insertRow(row_pos)
             self.current_projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(project["name"]))
