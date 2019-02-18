@@ -90,10 +90,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
     # Update employee table
     def update_workers(self):
-        # Attempt to change the row id in the table
-        # index_list = [str(item) for item in range(self.workers_table_page, self.workers_table_page + int(self.size_page.text())+1)]
-        # self.workers_table.setVerticalHeaderLabels(index_list)
-
         self.label_log_main.setText("")
         answer = self.api.get_all_users({"offset": self.workers_table_page, "length": int(self.size_page.text())})
         if answer:
@@ -111,6 +107,9 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                     self.workers_table.setItem(row_pos, x, QtWidgets.QTableWidgetItem(worker["name"][x-1]))
                 self.workers_table.setItem(row_pos, 4, QtWidgets.QTableWidgetItem(worker["position"]))
                 self.workers_table.setItem(row_pos, 5, QtWidgets.QTableWidgetItem(worker["_id"]))
+                # Attempt to change the row id in the table
+                index_list = [str(item+1) for item in range(self.workers_table_page, self.workers_table_page + int(self.size_page.text()))]
+                self.workers_table.setVerticalHeaderLabels(index_list)
         else:
             self.label_log_main.setText("Сервер недоступен!")
             return
