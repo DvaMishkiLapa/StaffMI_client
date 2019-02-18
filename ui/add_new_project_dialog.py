@@ -11,12 +11,13 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_add_new_project_dialog(object):
     def setupUi(self, add_new_project_dialog):
         add_new_project_dialog.setObjectName("add_new_project_dialog")
-        add_new_project_dialog.resize(350, 300)
-        add_new_project_dialog.setMinimumSize(QtCore.QSize(350, 300))
-        add_new_project_dialog.setMaximumSize(QtCore.QSize(350, 300))
+        add_new_project_dialog.resize(370, 341)
+        add_new_project_dialog.setMinimumSize(QtCore.QSize(370, 341))
+        add_new_project_dialog.setMaximumSize(QtCore.QSize(370, 341))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("iconstitle.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         add_new_project_dialog.setWindowIcon(icon)
+        add_new_project_dialog.setStyleSheet("font: 11pt \"Times New Roman\";")
         self.gridLayout = QtWidgets.QGridLayout(add_new_project_dialog)
         self.gridLayout.setObjectName("gridLayout")
         self.line_2 = QtWidgets.QFrame(add_new_project_dialog)
@@ -48,7 +49,8 @@ class Ui_add_new_project_dialog(object):
         self.label_dialog_newproject.setObjectName("label_dialog_newproject")
         self.gridLayout.addWidget(self.label_dialog_newproject, 0, 0, 1, 4)
         self.label_error = QtWidgets.QLabel(add_new_project_dialog)
-        self.label_error.setStyleSheet("color: rgb(255, 0, 0);\n"
+        self.label_error.setStyleSheet("font: 11pt \"Times New Roman\";\n"
+"color: rgb(255, 0, 0);\n"
 "font-weight: bold;")
         self.label_error.setText("")
         self.label_error.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)

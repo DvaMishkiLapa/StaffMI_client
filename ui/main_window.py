@@ -24,6 +24,7 @@ class Ui_MainWindow(object):
         icon.addPixmap(QtGui.QPixmap("ui/icons/title.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setWindowOpacity(1.0)
+        MainWindow.setStyleSheet("font: 11pt \"Times New Roman\";")
         MainWindow.setIconSize(QtCore.QSize(32, 32))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -524,7 +525,8 @@ class Ui_MainWindow(object):
         self.label_log_main.setSizePolicy(sizePolicy)
         self.label_log_main.setMinimumSize(QtCore.QSize(0, 0))
         self.label_log_main.setMaximumSize(QtCore.QSize(16777215, 16777215))
-        self.label_log_main.setStyleSheet("color: rgb(255, 0, 0);\n"
+        self.label_log_main.setStyleSheet("font: 11pt \"Times New Roman\";\n"
+"color: rgb(255, 0, 0);\n"
 "font-weight: bold;")
         self.label_log_main.setText("")
         self.label_log_main.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
@@ -608,3 +610,4 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+

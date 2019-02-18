@@ -18,6 +18,7 @@ class Ui_add_inproject_dialog(object):
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("ui/icons/title.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         add_inproject_dialog.setWindowIcon(icon)
+        add_inproject_dialog.setStyleSheet("font: 11pt \"Times New Roman\";")
         self.gridLayout = QtWidgets.QGridLayout(add_inproject_dialog)
         self.gridLayout.setObjectName("gridLayout")
         self.label_dialog_inpoject = QtWidgets.QLabel(add_inproject_dialog)

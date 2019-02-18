@@ -32,6 +32,9 @@
    <iconset>
     <normaloff>icons/title.png</normaloff>icons/title.png</iconset>
   </property>
+  <property name="styleSheet">
+   <string notr="true">font: 11pt &quot;Times New Roman&quot;;</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="3">
     <widget class="QLabel" name="label_dialog_inpoject">

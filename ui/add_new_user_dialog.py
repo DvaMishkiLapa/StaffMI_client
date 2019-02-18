@@ -11,21 +11,23 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_add_new_user_dialog(object):
     def setupUi(self, add_new_user_dialog):
         add_new_user_dialog.setObjectName("add_new_user_dialog")
-        add_new_user_dialog.resize(350, 275)
+        add_new_user_dialog.resize(400, 325)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(add_new_user_dialog.sizePolicy().hasHeightForWidth())
         add_new_user_dialog.setSizePolicy(sizePolicy)
-        add_new_user_dialog.setMinimumSize(QtCore.QSize(350, 275))
-        add_new_user_dialog.setMaximumSize(QtCore.QSize(350, 275))
+        add_new_user_dialog.setMinimumSize(QtCore.QSize(400, 325))
+        add_new_user_dialog.setMaximumSize(QtCore.QSize(400, 325))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("ui/icons/title.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         add_new_user_dialog.setWindowIcon(icon)
+        add_new_user_dialog.setStyleSheet("font: 11pt \"Times New Roman\";")
         self.gridLayout = QtWidgets.QGridLayout(add_new_user_dialog)
         self.gridLayout.setObjectName("gridLayout")
         self.label_error = QtWidgets.QLabel(add_new_user_dialog)
-        self.label_error.setStyleSheet("color: rgb(255, 0, 0);\n"
+        self.label_error.setStyleSheet("font: 11pt \"Times New Roman\";\n"
+"color: rgb(255, 0, 0);\n"
 "font-weight: bold;")
         self.label_error.setText("")
         self.label_error.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)

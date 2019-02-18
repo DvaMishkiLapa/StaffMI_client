@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>350</width>
-    <height>300</height>
+    <width>370</width>
+    <height>341</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>350</width>
-    <height>300</height>
+    <width>370</width>
+    <height>341</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>350</width>
-    <height>300</height>
+    <width>370</width>
+    <height>341</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,10 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>iconstitle.png</normaloff>icons/title.png</iconset>
+    <normaloff>iconstitle.png</normaloff>iconstitle.png</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">font: 11pt &quot;Times New Roman&quot;;</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="7" column="0" colspan="4">
@@ -90,7 +93,8 @@
    <item row="8" column="0" colspan="4">
     <widget class="QLabel" name="label_error">
      <property name="styleSheet">
-      <string notr="true">color: rgb(255, 0, 0);
+      <string notr="true">font: 11pt &quot;Times New Roman&quot;;
+color: rgb(255, 0, 0);
 font-weight: bold;</string>
      </property>
      <property name="text">
