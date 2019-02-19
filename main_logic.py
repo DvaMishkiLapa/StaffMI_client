@@ -641,6 +641,8 @@ class newProjectDialogWindow(QtWidgets.QDialog, add_new_project_dialog.Ui_add_ne
             deadline = self.calendarWidget.selectedDate()
             if not name or deadline.isNull():
                 self.label_error.setText("Заполнены не все данные!")
+            elif len(name) > 65:
+                self.label_error.setText("Название проекта слишком большое!")
             else:
                 date_deadline = str(deadline.day()) + "." + str(deadline.month()) + "." + str(deadline.year())
                 data = [{"name": name, "deadline": date_deadline}]
