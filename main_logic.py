@@ -88,6 +88,15 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.projects_table.setColumnHidden(2, True)
 
 
+    def resizeEvent(self, event):
+        self.workers_table.setColumnWidth(0, self.width()/6)
+        self.workers_table.setColumnWidth(1, self.width()/12)
+        self.workers_table.setColumnWidth(2, self.width()/12)
+        self.workers_table.setColumnWidth(3, self.width()/12)
+        self.workers_table.setColumnWidth(4, self.width()/4)
+        self.projects_table.setColumnWidth(0, self.width()/1.5)
+
+
     # Update employee table
     def update_workers(self):
         self.label_log_main.setText("")
@@ -109,7 +118,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                 self.workers_table.setItem(row_pos, 5, QtWidgets.QTableWidgetItem(worker["_id"]))
                 # Attempt to change the row id in the table
                 index_list = [str(item+1) for item in range(self.workers_table_page, self.workers_table_page + int(self.size_page.text()))]
-                self.workers_table.setVerticalHeaderLabels(index_list)
+            self.workers_table.setVerticalHeaderLabels(index_list)
         else:
             self.label_log_main.setText("Сервер недоступен!")
             return
