@@ -404,11 +404,14 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.current_projects_table.setRowCount(0)
         row = self.workers_table.selectionModel().selectedRows()[0]
         self.clicked_worker_row = row.sibling(row.row(), 0).data()
-        for project in self.user_projects[self.clicked_worker_row]:
-            row_pos = self.current_projects_table.rowCount()
-            self.current_projects_table.insertRow(row_pos)
-            self.current_projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(project["name"]))
-            self.current_projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(project["deadline"]))
+        try:
+            for project in self.user_projects[self.clicked_worker_row]:
+                row_pos = self.current_projects_table.rowCount()
+                self.current_projects_table.insertRow(row_pos)
+                self.current_projects_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(project["name"]))
+                self.current_projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(project["deadline"]))
+        except KeyError:
+            pass
 
 
     def settings_click(self):
