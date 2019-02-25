@@ -443,7 +443,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     # One page ahead
     def page_right_click(self):
         self.workers_table_page += int(self.size_page.text())
-        if self.api.get_users_count() - self.workers_table_page < int(self.size_page.text()):
+        if self.api.get_users_count() - self.workers_table_page <= int(self.size_page.text()):
             self.full_right.setEnabled(False)
             self.page_right.setEnabled(False)
         self.full_left.setEnabled(True)
