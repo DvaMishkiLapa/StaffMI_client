@@ -117,7 +117,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                 self.workers_table.setItem(row_pos, 4, QtWidgets.QTableWidgetItem(worker["position"]))
                 self.workers_table.setItem(row_pos, 5, QtWidgets.QTableWidgetItem(worker["_id"]))
                 # Attempt to change the row id in the table
-                index_list = [str(item+1) for item in range(self.workers_table_page, self.workers_table_page + int(self.size_page.text()))]
+            index_list = [str(item+1) for item in range(self.workers_table_page, self.workers_table_page + int(self.size_page.text()))]
             self.workers_table.setVerticalHeaderLabels(index_list)
         else:
             self.label_log_main.setText("Сервер недоступен!")
@@ -155,7 +155,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
     # Call add user dialog
     def add_worker_click(self):
-        chose_dialog = newUserDialogWindow(self.api, self.workers_table, self.new_worker_rows)
+        chose_dialog = newUserDialogWindow(self, self.api, self.workers_table, self.new_worker_rows)
         chose_dialog.exec_()
 
 
@@ -676,12 +676,14 @@ class newProjectDialogWindow(QtWidgets.QDialog, add_new_project_dialog.Ui_add_ne
 
 # The class responsible for adding a new user window
 class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user_dialog):
-    def __init__(self, api, table, list_new_workers):
+    def __init__(self, main_class, api, table, list_new_workers):
         super().__init__()
         self.setupUi(self)
         self.api = api
         self.table = table
         self.list = list_new_workers
+        # [I need help :( )]
+        self.main_class = main_class
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
 
         # buttons events
@@ -714,6 +716,9 @@ class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user
                     last_row = self.api.get_all_users({"offset": -1, "length": row_pos+42})[0]
                     self.api.del_users([last_row["_id"]])
                     self.table.insertRow(row_pos)
+                    # [I need help :( )]
+                    index_list = [str(item+1) for item in range(self.main_class.workers_table_page, self.main_class.workers_table_page + int(self.main_class.size_page.text()))]
+                    self.main_class.workers_table.setVerticalHeaderLabels(index_list)
                     self.table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(email))
                     self.table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(surname))
                     self.table.setItem(row_pos, 2, QtWidgets.QTableWidgetItem(name))
