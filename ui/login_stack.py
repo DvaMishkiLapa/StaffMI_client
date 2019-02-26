@@ -2,11 +2,12 @@
 
 # Form implementation generated from reading ui file '.\ui\login_stack.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.12
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_login_dialog(object):
     def setupUi(self, login_dialog):
@@ -59,6 +60,7 @@ class Ui_login_dialog(object):
         self.check_save_loginpwd.setObjectName("check_save_loginpwd")
         self.gridLayout_5.addWidget(self.check_save_loginpwd, 8, 1, 1, 1)
         self.label_log_login = QtWidgets.QLabel(self.page_login)
+        self.label_log_login.setMaximumSize(QtCore.QSize(16777215, 15))
         self.label_log_login.setStyleSheet("font: 11pt \"Times New Roman\";\n"
 "color: rgb(255, 0, 0);\n"
 "font-weight: bold;")
@@ -175,6 +177,7 @@ class Ui_login_dialog(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
         self.groupBox.setSizePolicy(sizePolicy)
+        self.groupBox.setMinimumSize(QtCore.QSize(0, 40))
         self.groupBox.setTitle("")
         self.groupBox.setFlat(True)
         self.groupBox.setObjectName("groupBox")
@@ -186,12 +189,14 @@ class Ui_login_dialog(object):
         spacerItem7 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout_3.addItem(spacerItem7, 0, 2, 1, 1)
         self.login_button = QtWidgets.QPushButton(self.groupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(100)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.login_button.sizePolicy().hasHeightForWidth())
         self.login_button.setSizePolicy(sizePolicy)
-        self.login_button.setMinimumSize(QtCore.QSize(0, 23))
+        self.login_button.setMinimumSize(QtCore.QSize(0, 34))
+        self.login_button.setStyleSheet("font: 11pt \"Times New Roman\";\n"
+"font-weight: bold;")
         self.login_button.setObjectName("login_button")
         self.gridLayout_3.addWidget(self.login_button, 0, 1, 1, 1)
         spacerItem8 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -366,6 +371,8 @@ class Ui_login_dialog(object):
         self.message_oldpwd.setText(_translate("login_dialog", "Введите ваш логин и текущий пароль"))
 
 
+
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -374,4 +381,3 @@ if __name__ == "__main__":
     ui.setupUi(login_dialog)
     login_dialog.show()
     sys.exit(app.exec_())
-

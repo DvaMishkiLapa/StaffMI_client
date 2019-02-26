@@ -2,11 +2,12 @@
 
 # Form implementation generated from reading ui file '.\ui\add_new_user_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.12
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_add_new_user_dialog(object):
     def setupUi(self, add_new_user_dialog):
@@ -26,6 +27,8 @@ class Ui_add_new_user_dialog(object):
         self.gridLayout = QtWidgets.QGridLayout(add_new_user_dialog)
         self.gridLayout.setObjectName("gridLayout")
         self.label_error = QtWidgets.QLabel(add_new_user_dialog)
+        self.label_error.setMinimumSize(QtCore.QSize(0, 0))
+        self.label_error.setMaximumSize(QtCore.QSize(16777215, 15))
         self.label_error.setStyleSheet("font: 11pt \"Times New Roman\";\n"
 "color: rgb(255, 0, 0);\n"
 "font-weight: bold;")
@@ -153,6 +156,8 @@ class Ui_add_new_user_dialog(object):
         self.add_button.setText(_translate("add_new_user_dialog", "Добавить"))
 
 
+
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -161,4 +166,3 @@ if __name__ == "__main__":
     ui.setupUi(add_new_user_dialog)
     add_new_user_dialog.show()
     sys.exit(app.exec_())
-

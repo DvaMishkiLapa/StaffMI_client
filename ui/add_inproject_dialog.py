@@ -2,19 +2,20 @@
 
 # Form implementation generated from reading ui file '.\ui\add_inproject_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.12
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_add_inproject_dialog(object):
     def setupUi(self, add_inproject_dialog):
         add_inproject_dialog.setObjectName("add_inproject_dialog")
         add_inproject_dialog.setWindowModality(QtCore.Qt.NonModal)
-        add_inproject_dialog.resize(550, 350)
-        add_inproject_dialog.setMinimumSize(QtCore.QSize(550, 350))
-        add_inproject_dialog.setMaximumSize(QtCore.QSize(550, 350))
+        add_inproject_dialog.resize(600, 400)
+        add_inproject_dialog.setMinimumSize(QtCore.QSize(600, 400))
+        add_inproject_dialog.setMaximumSize(QtCore.QSize(600, 400))
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap("ui/icons/title.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         add_inproject_dialog.setWindowIcon(icon)
@@ -74,6 +75,8 @@ class Ui_add_inproject_dialog(object):
         item.setText(_translate("add_inproject_dialog", "Срок сдачи"))
 
 
+
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -82,4 +85,3 @@ if __name__ == "__main__":
     ui.setupUi(add_inproject_dialog)
     add_inproject_dialog.show()
     sys.exit(app.exec_())
-

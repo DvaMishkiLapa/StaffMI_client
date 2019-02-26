@@ -2,11 +2,12 @@
 
 # Form implementation generated from reading ui file '.\ui\main_window.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.12
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -395,7 +396,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 1001, 60))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 417, 57))
         self.scrollAreaWidgetContents_2.setAutoFillBackground(True)
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.scrollAreaWidgetContents_2)
@@ -524,7 +525,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.label_log_main.sizePolicy().hasHeightForWidth())
         self.label_log_main.setSizePolicy(sizePolicy)
         self.label_log_main.setMinimumSize(QtCore.QSize(0, 0))
-        self.label_log_main.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.label_log_main.setMaximumSize(QtCore.QSize(16777215, 15))
         self.label_log_main.setStyleSheet("font: 11pt \"Times New Roman\";\n"
 "color: rgb(255, 0, 0);\n"
 "font-weight: bold;")
@@ -602,6 +603,8 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("MainWindow", "Задачи"))
 
 
+
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -610,4 +613,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-

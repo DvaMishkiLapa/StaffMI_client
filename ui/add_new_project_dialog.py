@@ -2,11 +2,12 @@
 
 # Form implementation generated from reading ui file '.\ui\add_new_project_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.11.3
+# Created by: PyQt5 UI code generator 5.12
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_add_new_project_dialog(object):
     def setupUi(self, add_new_project_dialog):
@@ -49,6 +50,7 @@ class Ui_add_new_project_dialog(object):
         self.label_dialog_newproject.setObjectName("label_dialog_newproject")
         self.gridLayout.addWidget(self.label_dialog_newproject, 0, 0, 1, 4)
         self.label_error = QtWidgets.QLabel(add_new_project_dialog)
+        self.label_error.setMaximumSize(QtCore.QSize(16777215, 15))
         self.label_error.setStyleSheet("font: 11pt \"Times New Roman\";\n"
 "color: rgb(255, 0, 0);\n"
 "font-weight: bold;")
@@ -76,6 +78,8 @@ class Ui_add_new_project_dialog(object):
         self.label_dialog_newproject.setText(_translate("add_new_project_dialog", "Введите название проекта и выберете его срок сдачи"))
 
 
+
+
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -84,4 +88,3 @@ if __name__ == "__main__":
     ui.setupUi(add_new_project_dialog)
     add_new_project_dialog.show()
     sys.exit(app.exec_())
-

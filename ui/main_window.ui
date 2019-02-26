@@ -878,8 +878,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1001</width>
-             <height>60</height>
+             <width>417</width>
+             <height>57</height>
             </rect>
            </property>
            <property name="autoFillBackground">
@@ -1169,7 +1169,7 @@
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>16777215</height>
+        <height>15</height>
        </size>
       </property>
       <property name="styleSheet">
