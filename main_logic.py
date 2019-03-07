@@ -177,6 +177,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
 
     # Call add user dialog
     def add_worker_click(self):
+        self.full_right_click()
         chose_dialog = newUserDialogWindow(self, self.api, self.workers_table, self.new_worker_rows)
         chose_dialog.exec_()
 
@@ -774,7 +775,7 @@ class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user
                     self.label_error.setText("Неверный вид Email!")
                 elif answer["content"]["add_users"][0]["ok"]:
                     row_pos = self.table.rowCount()
-                    last_row = self.api.get_all_users({"offset": -1, "length": row_pos+42})[0]
+                    last_row = self.api.get_all_users({"offset": self.api.get_users_count()-1, "length": self.api.get_users_count()})[0]
                     self.api.del_users([last_row["_id"]])
                     self.table.insertRow(row_pos)
                     # [I need help :( )]
@@ -791,7 +792,7 @@ class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user
                     for x in row:
                         x.setBackground(QColor(122, 255, 206))
                     self.table.scrollToBottom()
-                    self._new_project_timer.stop()
+                    self._new_user_timer.stop()
                     self.close()
                 else:
                     self.label_error.setText("Пользователь с таким Email уже существует!")
@@ -801,7 +802,7 @@ class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user
 
     # Cancel add
     def cancel_button_click(self):
-        self._new_project_timer.stop()
+        self._new_user_timer.stop()
         self.close()
 
 

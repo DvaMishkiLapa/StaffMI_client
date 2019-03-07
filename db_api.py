@@ -84,12 +84,14 @@ class API:
     def del_projects(self, projects):
         return self.send_query({"del_projects": projects})
 
+
     def change_password(self, args):
         return self.send_query({"change_password": args})
 
 
     def get_users_count(self):
         return self.send_query({"get_users_count": {}})
+
 
     def assign_to_projects(self, args):
         return self.send_query({"assign_to_projects": args})
