@@ -396,7 +396,7 @@ class Ui_MainWindow(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollArea_2.setObjectName("scrollArea_2")
         self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 417, 57))
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 1001, 60))
         self.scrollAreaWidgetContents_2.setAutoFillBackground(True)
         self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.scrollAreaWidgetContents_2)
@@ -524,7 +524,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.label_log_main.sizePolicy().hasHeightForWidth())
         self.label_log_main.setSizePolicy(sizePolicy)
-        self.label_log_main.setMinimumSize(QtCore.QSize(0, 0))
+        self.label_log_main.setMinimumSize(QtCore.QSize(0, 20))
         self.label_log_main.setMaximumSize(QtCore.QSize(16777215, 15))
         self.label_log_main.setStyleSheet("font: 11pt \"Times New Roman\";\n"
 "color: rgb(255, 0, 0);\n"

@@ -27,7 +27,7 @@ class Ui_add_new_user_dialog(object):
         self.gridLayout = QtWidgets.QGridLayout(add_new_user_dialog)
         self.gridLayout.setObjectName("gridLayout")
         self.label_error = QtWidgets.QLabel(add_new_user_dialog)
-        self.label_error.setMinimumSize(QtCore.QSize(0, 0))
+        self.label_error.setMinimumSize(QtCore.QSize(0, 20))
         self.label_error.setMaximumSize(QtCore.QSize(16777215, 15))
         self.label_error.setStyleSheet("font: 11pt \"Times New Roman\";\n"
 "color: rgb(255, 0, 0);\n"

@@ -60,6 +60,7 @@ class Ui_login_dialog(object):
         self.check_save_loginpwd.setObjectName("check_save_loginpwd")
         self.gridLayout_5.addWidget(self.check_save_loginpwd, 8, 1, 1, 1)
         self.label_log_login = QtWidgets.QLabel(self.page_login)
+        self.label_log_login.setMinimumSize(QtCore.QSize(0, 20))
         self.label_log_login.setMaximumSize(QtCore.QSize(16777215, 15))
         self.label_log_login.setStyleSheet("font: 11pt \"Times New Roman\";\n"
 "color: rgb(255, 0, 0);\n"

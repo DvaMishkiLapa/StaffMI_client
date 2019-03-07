@@ -50,6 +50,7 @@ class Ui_add_new_project_dialog(object):
         self.label_dialog_newproject.setObjectName("label_dialog_newproject")
         self.gridLayout.addWidget(self.label_dialog_newproject, 0, 0, 1, 4)
         self.label_error = QtWidgets.QLabel(add_new_project_dialog)
+        self.label_error.setMinimumSize(QtCore.QSize(0, 20))
         self.label_error.setMaximumSize(QtCore.QSize(16777215, 15))
         self.label_error.setStyleSheet("font: 11pt \"Times New Roman\";\n"
 "color: rgb(255, 0, 0);\n"
