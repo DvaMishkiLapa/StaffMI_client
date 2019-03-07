@@ -11,6 +11,14 @@ class API:
         self.pwd = ''
 
 
+    def check_connect(self):
+        try:
+            requests.get(host)
+            return True
+        except requests.exceptions.ConnectionError:
+            return False
+
+
     def authorization(self, email, pwd):
         data = json.dumps({"requests": {"authorization": {"email": email, "pwd": pwd}}, 'token': ''})
         try:

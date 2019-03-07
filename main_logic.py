@@ -4,7 +4,7 @@ import json
 import sys
 
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QColor
 
 from ui import main_window              #
@@ -14,7 +14,6 @@ from ui import add_new_user_dialog      #
 from ui import add_new_project_dialog   #
 
 import db_api
-
 
 
 # Class responsible for the main window of working with the database
@@ -87,6 +86,33 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.workers_table.setColumnHidden(5, True)
         self.projects_table.setColumnHidden(2, True)
 
+        self._main_timer = QTimer()
+        self._main_timer.timeout.connect(self._timer_tick)
+        self._main_timer.start(10000)
+        self.connect_status = 0
+
+
+    def _timer_tick(self):
+        self.connect_status = self.api.check_connect()
+        if self.connect_status:
+            self.label_log_main.setText("")
+            self.button_status(True)
+        else:
+            self.label_log_main.setText("Сервер недоступен!")
+            self.button_status(False)
+            
+
+    def button_status(self, status):
+        self.add_worker.setEnabled(status)
+        self.save_workers.setEnabled(status)
+        self.new_inproject.setEnabled(status)
+        self.del_inproject.setEnabled(status)
+        self.save_inprojects.setEnabled(status)
+        self.update_data.setEnabled(status)
+        self.add_project.setEnabled(status)
+        self.save_projects.setEnabled(status)
+        self.update_data_2.setEnabled(status)
+
 
     def resizeEvent(self, event):
         self.workers_table.setColumnWidth(0, self.width()/6)
@@ -96,12 +122,11 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.workers_table.setColumnWidth(4, self.width()/4)
         self.projects_table.setColumnWidth(0, self.width()/1.5)
 
-
     # Update employee table
     def update_workers(self):
-        self.label_log_main.setText("")
-        answer = self.api.get_all_users({"offset": self.workers_table_page, "length": int(self.size_page.text())})
-        if answer:
+        self.connect_status = self.api.check_connect()
+        if self.connect_status:
+            answer = self.api.get_all_users({"offset": self.workers_table_page, "length": int(self.size_page.text())})
             self.user_projects.clear()
             self.workers_table.clearContents()  # Table cleaning
             self.workers_table.setRowCount(0)   #
@@ -123,12 +148,11 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             self.label_log_main.setText("Сервер недоступен!")
             return
 
-
     # Update projects table
     def update_projects(self):
-        self.label_log_main.setText("")
-        answer = self.api.get_all_projects({"offset": self.workers_table_page, "length": 1000}) # No pages
-        if answer:
+        self.connect_status = self.api.check_connect()
+        if self.connect_status:
+            answer = self.api.get_all_projects({"offset": self.workers_table_page, "length": 1000}) # No pages
             self.projects_table.clearContents() # Table cleaning
             self.projects_table.setRowCount(0)  #
             for project in answer:
@@ -141,7 +165,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             self.label_log_main.setText("Сервер недоступен!")
             return
 
-
     # Unpacking data from QModelIndex into edited worker lists (solving strange model problems)
     def unpacked_worker_changed(self):
         for obj in self.worker_rows_were_changed:
@@ -152,12 +175,10 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                 "position": obj.sibling(obj.row(), 4).data()
             })
 
-
     # Call add user dialog
     def add_worker_click(self):
         chose_dialog = newUserDialogWindow(self, self.api, self.workers_table, self.new_worker_rows)
         chose_dialog.exec_()
-
 
     # Removal of workers
     def del_worker_click(self):
@@ -175,11 +196,10 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                 for x in range(0, 5):
                     table.setData(table.index(index, x), QColor(255, 127, 127), Qt.BackgroundRole)
 
-
     # Sending all changes to the employee table to the server
     def save_workers_click(self):
-        self.label_log_main.setText("")
-        if self.api.get_all_users({"offset": 0, "length": 1}): # A kind of server availability check
+        self.connect_status = self.api.check_connect()
+        if self.connect_status:
             if self.worker_rows_to_delete:
                 self.api.del_users(self.worker_rows_to_delete)
                 self.worker_rows_to_delete.clear()
@@ -195,7 +215,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         else:
             self.label_log_main.setText("Сервер недоступен!")
             return
-
 
     # Employee data change
     # [A bad signal is used, an analog is needed]
@@ -214,14 +233,14 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                 table.setData(table.index(index, x), QColor(255, 253, 153), Qt.BackgroundRole)
             self.worker_rows_were_changed.append(row)
 
-
     # Add selected employee to project
     # [Awful implementation, you also need to get away from instant sending to the server]
     def new_inproject_click(self):
         rows = self.workers_table.selectionModel().selectedRows()
         if rows:
-            answer = self.api.get_all_projects({"offset": 0, "length": 1000}) # :/
-            if answer:
+            self.connect_status = self.api.check_connect()
+            if self.connect_status:
+                answer = self.api.get_all_projects({"offset": 0, "length": 1000}) # :/
                 chose_dialog = inprojectDialogWindow(answer)
                 chose_dialog.exec_()
                 answer_user = chose_dialog.answer
@@ -243,7 +262,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             else:
                 self.label_log_main.setText("Сервер недоступен!")
                 return
-
 
     # Remove selected worker from project
     # [Need to get away from instant sending to the server]
@@ -271,12 +289,10 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def save_inprojects_click(self):
         print("save_inprojects_click")
 
-
     # Call the project creation dialog
     def add_project_click(self):
         chose_dialog = newProjectDialogWindow(self.api, self.projects_table, self.new_project_rows)
         chose_dialog.exec_()
-
 
     # Project deletion
     def del_project_click(self):
@@ -294,11 +310,10 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                 for x in range(0, 5):
                     table.setData(table.index(index, x), QColor(255, 127, 127), Qt.BackgroundRole)
 
-
     # Saving changes to the project table
     def save_projects_click(self):
-        self.label_log_main.setText("")
-        if self.api.get_all_users({"offset": 0, "length": 1}): # A kind of server availability check
+        self.connect_status = self.api.check_connect()
+        if self.connect_status:
             if self.project_rows_to_delete:
                 self.api.del_projects(self.project_rows_to_delete)
                 self.project_rows_to_delete.clear()
@@ -321,7 +336,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             self.label_log_main.setText("Сервер недоступен!")
             return
 
-
     # Change project data
     # [A bad signal is used, an analog is needed]
     def changed_cell_projects_table(self):
@@ -337,7 +351,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             for x in range(0, 5):
                 table.setData(table.index(index, x), QColor(255, 253, 153), Qt.BackgroundRole)
             self.project_rows_were_changed.append(row)
-
 
     # Undo changes for employee table
     def undo_changes_workers_table(self):
@@ -363,7 +376,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             self.workers_table.removeRow(self.workers_table.findItems(item, Qt.MatchContains)[0].row())
         self.new_worker_rows.clear()
 
-
     # Discarding changes to the project table
     def undo_changes_projects_table(self):
         self.project_rows_to_delete.clear()
@@ -386,16 +398,16 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             self.projects_table.removeRow(self.projects_table.findItems(item, Qt.MatchContains)[0].row())
         self.new_project_rows.clear()
 
-
     # User logout
     # [Somewhere here memory leaks...]
     def logout_click(self):
+        self._main_timer.stop()
         self.workers_table.clear()
         self.projects_table.clear()
         self.current_projects_table.clear()
+        self.last_window._login_timer.start(10000)
         self.destroy()
         self.last_window.show()
-
 
     # Displaying employee projects after selecting them
     # [A bad signal is used, an analog is needed]
@@ -421,11 +433,10 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     # Updating data for the table of workers through the server
     def update_workers_table_click(self):
         self.update_workers()
-
+        
     # Data update for project table via server
     def update_projects_table_click(self):
         self.update_projects()
-
 
     # Page back one
     def page_left_click(self):
@@ -439,7 +450,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.worker_rows_were_changed.clear()
         self.update_workers()
 
-
     # One page ahead
     def page_right_click(self):
         self.workers_table_page += int(self.size_page.text())
@@ -452,7 +462,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.worker_rows_were_changed.clear()
         self.update_workers()
 
-
     # Page change to first
     def full_left_click(self):
         self.workers_table_page = 0
@@ -463,7 +472,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.unpacked_worker_changed()
         self.worker_rows_were_changed.clear()
         self.update_workers()
-
 
     # Page change to last
     def full_right_click(self):
@@ -477,12 +485,10 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.worker_rows_were_changed.clear()
         self.update_workers()
 
-
     # [X]
     def closeEvent(self, event):
         event.accept()
         quit()
-
 
 
 # Class responsible for the stack window
@@ -516,71 +522,91 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
         self.save_newpwd_button.clicked.connect(self.save_newpwd_button_click)
         self.back_login_button.clicked.connect(self.back_login_button_click)
 
+        self._login_timer = QTimer()
+        self._login_timer.timeout.connect(self._timer_tick)
+        self._login_timer.start(10000)
+        self.connect_status = 0
+
+
+    def _timer_tick(self):
+        self.connect_status = self.api.check_connect()
+        if self.connect_status:
+            self.label_log_login.setText("")
+            self.button_status(True)
+        else:
+            self.label_log_login.setText("Сервер недоступен!")
+            self.button_status(False)
+
+
+    def button_status(self, status):
+        self.login_button.setEnabled(status)
+        self.save_newpwd_button.setEnabled(status)
 
     # page_login(0) login button
     def login_button_click(self):
-        self.label_log_login.setText("")
         self.api.user = self.input_login.text()
         self.api.pwd = self.input_pwd.text()
-        answer = self.api.authorization(self.api.user, self.api.pwd)
         flag = self.check_save_loginpwd.isChecked()
-        if answer:
+        self.connect_status = self.api.check_connect()
+        if self.connect_status:
+            answer = self.api.authorization(self.api.user, self.api.pwd)
             if not answer["content"]["authorization"]["ok"]:
                 self.error_loginpwd.setText("Неверный логин или пароль!")
             elif flag:
                 with open("memory.json", "w") as f:
                     f.write(json.dumps({"user_info":{"login": self.api.user, "pwd": self.api.pwd}, "flag": flag}))
-                self.destroy()
+                self._login_timer.stop()
                 self.miWindow = miWindow(self.api)
                 self.miWindow.last_window = self
+                self.destroy()
                 self.miWindow.show()
             else:
                 with open("memory.json", "w") as f:
                     f.write(json.dumps({"user_info": {"login": "", "pwd": ""}, "flag": False}))
+                self._login_timer.stop()
                 self.input_login.setText("")
                 self.input_pwd.setText("")
-                self.destroy()
                 self.miWindow = miWindow(self.api)
                 self.miWindow.last_window = self
+                self.destroy()
                 self.miWindow.show()
         else:
             self.label_log_login.setText("Сервер недоступен!")
             return
 
-
     # page_login(0) go to the user login change window
     def newpwd_button_click(self):
         self.login_stack.setCurrentIndex(1) # page_replace_login
-
 
     # page_replace_pwd(2) back button
     def back_login_button_click(self):
         self.login_stack.setCurrentIndex(0) # page_login
 
-
     # page_replace_pwd(2) button user pwd changes
     def save_newpwd_button_click(self):
-        self.label_log_reppwd.setText("")
         login = self.input_login_reppwd.text()
         old_pwd = self.input_oldpwd.text()
         new_pwd = self.input_newpwd.text()
-        if old_pwd != new_pwd:
-            answer = self.api.change_password({"email": login, "old_pwd": old_pwd, "new_pwd": new_pwd})
-            if answer == "Password has been changed.":
-                self.error_reppwd.setStyleSheet("color: rgb(75, 225, 0);; font-weight: bold;")
-                self.error_reppwd.setText("Пароль успешно изменен")
+        self.connect_status = self.api.check_connect()
+        if self.connect_status:
+            if old_pwd != new_pwd:
+                answer = self.api.change_password({"email": login, "old_pwd": old_pwd, "new_pwd": new_pwd})
+                if answer == "Password has been changed.":
+                    self.error_reppwd.setStyleSheet("color: rgb(75, 225, 0);; font-weight: bold;")
+                    self.error_reppwd.setText("Пароль успешно изменен")
+                else:
+                    self.error_reppwd.setStyleSheet("color: rgb(255, 0, 0);; font-weight: bold;")
+                    self.error_reppwd.setText("Неверный логин или пароль!")
             else:
                 self.error_reppwd.setStyleSheet("color: rgb(255, 0, 0);; font-weight: bold;")
-                self.error_reppwd.setText("Неверный логин или пароль!")
+                self.error_reppwd.setText("Новый пароль совпадает с текущим!")
         else:
-            self.error_reppwd.setStyleSheet("color: rgb(255, 0, 0);; font-weight: bold;")
-            self.error_reppwd.setText("Новый пароль совпадает с текущим!")
+            self.label_log_reppwd.setText("Сервер недоступен!")
 
     # [X]
     def closeEvent(self, event):
         event.accept()
         quit()
-
 
 
 # Сlass with a project selection dialog for an employee
@@ -602,23 +628,19 @@ class inprojectDialogWindow(QtWidgets.QDialog, add_inproject_dialog.Ui_add_inpro
             self.table_projects.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(project["name"]))
             self.table_projects.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(project["deadline"]))
 
-
     # Confirmation of choice
     def add_button_click(self):
         self.answer = self.table_projects.selectedItems()
         self.close()
 
-
     # Cancel selection
     def cancel_button_click(self):
         self.close()
-
 
     # Enable confirmation button if item is selected
     # [Perhaps you can do better]
     def on_table_projects_itemClicked(self, item):
         self.add_button.setEnabled(True)
-
 
 
 # The class responsible for adding a new project window
@@ -635,11 +657,29 @@ class newProjectDialogWindow(QtWidgets.QDialog, add_new_project_dialog.Ui_add_ne
         self.add_button.clicked.connect(self.add_button_click)
         self.cancel_button.clicked.connect(self.cancel_button_click)
 
+        self._new_project_timer = QTimer()
+        self._new_project_timer.timeout.connect(self._timer_tick)
+        self._new_project_timer.start(10000)
+        self.connect_status = 0
+
+
+    def _timer_tick(self):
+        self.connect_status = self.api.check_connect()
+        if self.connect_status:
+            self.label_error.setText("")
+            self.button_status(True)
+        else:
+            self.label_error.setText("Сервер недоступен!")
+            self.button_status(False)
+
+
+    def button_status(self, status):
+        self.add_button.setEnabled(status)
 
     # Add confirmation
     def add_button_click(self):
-        self.label_error.setText("")
-        if self.api.get_all_users({"offset": 0, "length": 1}):
+        self.connect_status = self.api.check_connect()
+        if self.connect_status:
             name = self.line_project_name.text()
             deadline = self.calendarWidget.selectedDate()
             if not name or deadline.isNull():
@@ -663,6 +703,7 @@ class newProjectDialogWindow(QtWidgets.QDialog, add_new_project_dialog.Ui_add_ne
                     for x in row:
                         x.setBackground(QColor(122, 255, 206))
                     self.table.scrollToBottom()
+                    self._new_project_timer.stop()
                     self.close()
                 else:
                     self.label_error.setText("Проект с таким наименованием уже существует!")
@@ -670,11 +711,10 @@ class newProjectDialogWindow(QtWidgets.QDialog, add_new_project_dialog.Ui_add_ne
             self.label_error.setText("Сервер недоступен!")
             return 
 
-
     # Cancel add
     def cancel_button_click(self):
+        self._new_project_timer.stop()
         self.close()
-
 
 
 # The class responsible for adding a new user window
@@ -693,11 +733,29 @@ class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user
         self.add_button.clicked.connect(self.add_button_click)
         self.cancel_button.clicked.connect(self.cancel_button_click)
 
+        self._new_user_timer = QTimer()
+        self._new_user_timer.timeout.connect(self._timer_tick)
+        self._new_user_timer.start(10000)
+        self.connect_status = 0
+
+
+    def _timer_tick(self):
+        self.connect_status = self.api.check_connect()
+        if self.connect_status:
+            self.label_error.setText("")
+            self.button_status(True)
+        else:
+            self.label_error.setText("Сервер недоступен!")
+            self.button_status(False)
+
+
+    def button_status(self, status):
+        self.add_button.setEnabled(status)
 
     # Add confirmation
     def add_button_click(self):
-        self.label_error.setText("")
-        if self.api.get_all_users({"offset": 0, "length": 1}):
+        self.connect_status = self.api.check_connect()
+        if self.connect_status:
             email = self.lineEdit_email.text()
             surname = self.lineEdit_surname.text()
             name = self.lineEdit_name.text()
@@ -733,6 +791,7 @@ class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user
                     for x in row:
                         x.setBackground(QColor(122, 255, 206))
                     self.table.scrollToBottom()
+                    self._new_project_timer.stop()
                     self.close()
                 else:
                     self.label_error.setText("Пользователь с таким Email уже существует!")
@@ -740,9 +799,9 @@ class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user
             self.label_error.setText("Сервер недоступен!")
             return 
 
-
     # Cancel add
     def cancel_button_click(self):
+        self._new_project_timer.stop()
         self.close()
 
 
