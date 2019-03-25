@@ -3,13 +3,11 @@ import requests
 host = 'https://pms.kmm-vsu.ru/'
 
 
-
 class API:
     def __init__(self):
         self.token = ''
         self.user = ''
         self.pwd = ''
-
 
     def check_connect(self):
         try:
@@ -17,7 +15,6 @@ class API:
             return True
         except requests.exceptions.ConnectionError:
             return False
-
 
     def authorization(self, email, pwd):
         data = json.dumps({"requests": {"authorization": {"email": email, "pwd": pwd}}, 'token': ''})
@@ -27,7 +24,6 @@ class API:
             return False
         self.token = response['content']['authorization']['content']
         return response
-
 
     def send_query(self, args):
         data = json.dumps({"requests": args, 'token': self.token})
@@ -52,50 +48,38 @@ class API:
                 pass
         return response
 
-
     def get_all_users(self, args):
         return self.send_query({"get_all_users": args})
-
 
     def get_all_projects(self, args):
         return self.send_query({"get_all_projects": args})
 
-
     def add_users(self, users):
         return self.send_query({"add_users": users})
-
 
     def edit_users(self, users):
         return self.send_query({"edit_users": users})
 
-
     def del_users(self, emails):
         return self.send_query({"del_users": emails})
-
 
     def add_projects(self, projects):
         return self.send_query({"add_projects": projects})
 
-
     def edit_projects(self, projects):
         return self.send_query({"edit_projects": projects})
-
 
     def del_projects(self, projects):
         return self.send_query({"del_projects": projects})
 
-
     def change_password(self, args):
         return self.send_query({"change_password": args})
-
 
     def get_users_count(self):
         return self.send_query({"get_users_count": {}})
 
-
     def assign_to_projects(self, args):
         return self.send_query({"assign_to_projects": args})
-
 
     def remove_from_projects(self, args):
         return self.send_query({"remove_from_projects": args})

@@ -7,13 +7,10 @@ from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QColor
 
-from ui import main_window              #
-from ui import login_stack              #
-from ui import add_inproject_dialog     # Import Interface Files
-from ui import add_new_user_dialog      #
-from ui import add_new_project_dialog   #
-
 import db_api
+# Import Interface Files
+from ui import add_inproject_dialog
+from ui import (add_new_project_dialog, add_new_user_dialog, login_stack, main_window)
 
 
 # Class responsible for the main window of working with the database
@@ -25,11 +22,11 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.api = api
 
         # Local save changes to workers
-        self.worker_rows_to_delete = []             # Here are the workers selected for deletion
-        self.worker_rows_were_changed = []          # Employees whose data has been changed are stored here
-        self.unpacked_worker_rows_were_changed = [] # To save data from other pages
-        self.new_worker_rows = []                   # New employees are stored here.
-        self.old_data_workers_rows = []             # Old employee data is stored here if it is necessary to return it.
+        self.worker_rows_to_delete = []              # Here are the workers selected for deletion
+        self.worker_rows_were_changed = []           # Employees whose data has been changed are stored here
+        self.unpacked_worker_rows_were_changed = []  # To save data from other pages
+        self.new_worker_rows = []                    # New employees are stored here.
+        self.old_data_workers_rows = []              # Old employee data is stored here if it is necessary to return it.
 
         # Local save changes to projects
         self.project_rows_to_delete = []             # The projects selected for deletion are stored here
@@ -38,10 +35,10 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.new_project_rows = []                   # New projects are stored here
         self.old_data_projects_rows = []             # Old project data is stored here if you need to return it.
 
-        self.user_projects = {} # Dictionary "email - project"
-        self.clicked_worker_row = None  # Modal selected worker
+        self.user_projects = {}                      # Dictionary "email - project"
+        self.clicked_worker_row = None               # Modal selected worker
 
-        self.workers_table_page = 0 # The current page of the workers table
+        self.workers_table_page = 0                  # The current page of the workers table
 
         self.update_workers()
         self.update_projects()
@@ -91,7 +88,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self._main_timer.start(10000)
         self.connect_status = 0
 
-
     def _timer_tick(self):
         self.connect_status = self.api.check_connect()
         if self.connect_status:
@@ -100,7 +96,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         else:
             self.label_log_main.setText("Сервер недоступен!")
             self.button_status(False)
-            
 
     def button_status(self, status):
         self.add_worker.setEnabled(status)
@@ -112,7 +107,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.add_project.setEnabled(status)
         self.save_projects.setEnabled(status)
         self.update_data_2.setEnabled(status)
-
 
     def resizeEvent(self, event):
         self.workers_table.setColumnWidth(0, self.width()/6)
@@ -130,14 +124,14 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             self.user_projects.clear()
             self.workers_table.clearContents()  # Table cleaning
             self.workers_table.setRowCount(0)   #
-            self.current_projects_table.clearContents() # Clearing the user’s project table
-            self.current_projects_table.setRowCount(0)  #
+            self.current_projects_table.clearContents()  # Clearing the user’s project table
+            self.current_projects_table.setRowCount(0)
             for worker in answer:
                 self.user_projects.update({worker["email"]: worker["projects"]})
                 row_pos = self.workers_table.rowCount()
                 self.workers_table.insertRow(row_pos)
                 self.workers_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(worker["email"]))
-                for x in range(1, 4): # Parsing of the name of the employee
+                for x in range(1, 4):  # Parsing of the name of the employee
                     self.workers_table.setItem(row_pos, x, QtWidgets.QTableWidgetItem(worker["name"][x-1]))
                 self.workers_table.setItem(row_pos, 4, QtWidgets.QTableWidgetItem(worker["position"]))
                 self.workers_table.setItem(row_pos, 5, QtWidgets.QTableWidgetItem(worker["_id"]))
@@ -152,9 +146,9 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def update_projects(self):
         self.connect_status = self.api.check_connect()
         if self.connect_status:
-            answer = self.api.get_all_projects({"offset": self.workers_table_page, "length": 1000}) # No pages
-            self.projects_table.clearContents() # Table cleaning
-            self.projects_table.setRowCount(0)  #
+            answer = self.api.get_all_projects({"offset": self.workers_table_page, "length": 1000})  # No pages
+            self.projects_table.clearContents()  # Table cleaning
+            self.projects_table.setRowCount(0)
             for project in answer:
                 row_pos = self.projects_table.rowCount()
                 self.projects_table.insertRow(row_pos)
@@ -188,7 +182,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             table = row.model()
             index = row.row()
             row_id = row.sibling(row.row(), 5).data()
-            try: # If the employee is already marked as deleted, remove him from the lists for deletion
+            try:  # If the employee is already marked as deleted, remove him from the lists for deletion
                 self.worker_rows_to_delete.remove(row_id)
                 for x in range(0, 5):
                     table.setData(table.index(index, x), QColor(255, 255, 255), Qt.BackgroundRole)
@@ -225,7 +219,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             table = row.model()
             index = row.row()
             self.old_data_workers_rows.append({
-                "_id": row.sibling(index, 5).data(), # Id is hidden in the table
+                "_id": row.sibling(index, 5).data(),  # Id is hidden in the table
                 "email": row.sibling(index, 0).data(),
                 "name": [row.sibling(index, 1).data(), row.sibling(index, 2).data(), row.sibling(index, 3).data()],
                 "position": row.sibling(index, 4).data()
@@ -241,7 +235,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         if rows:
             self.connect_status = self.api.check_connect()
             if self.connect_status:
-                answer = self.api.get_all_projects({"offset": 0, "length": 1000}) # :/
+                answer = self.api.get_all_projects({"offset": 0, "length": 1000})  # :/
                 chose_dialog = inprojectDialogWindow(answer)
                 chose_dialog.exec_()
                 answer_user = chose_dialog.answer
@@ -286,7 +280,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             list_index_rows.pop()
         self.api.remove_from_projects(request)
 
-
     def save_inprojects_click(self):
         print("save_inprojects_click")
 
@@ -302,7 +295,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             table = row.model()
             index = row.row()
             row_id = row.sibling(row.row(), 2).data()
-            try: # If the employee is already marked as deleted, remove him from the lists for deletion
+            try:  # If the employee is already marked as deleted, remove him from the lists for deletion
                 self.project_rows_to_delete.remove(row_id)
                 for x in range(0, 5):
                     table.setData(table.index(index, x), QColor(255, 255, 255), Qt.BackgroundRole)
@@ -357,11 +350,11 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def undo_changes_workers_table(self):
         self.worker_rows_to_delete.clear()
         self.unpacked_worker_rows_were_changed.clear()
-        self.workers_table.selectAll() # The selection of all elements, followed by painting in white
+        self.workers_table.selectAll()  # The selection of all elements, followed by painting in white
         for item in self.worker_rows_were_changed:
             row_id = item.sibling(item.row(), 5).data()
             index = item.row()
-            for old_item in self.old_data_workers_rows: # Returning old data if editing
+            for old_item in self.old_data_workers_rows:  # Returning old data if editing
                 if old_item["_id"] == row_id:
                     self.workers_table.setItem(index, 0, QtWidgets.QTableWidgetItem(old_item["email"]))
                     for x in range(1, 4):
@@ -373,7 +366,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         rows = self.workers_table.selectedItems()
         for x in rows:
             x.setBackground(QColor(255, 255, 255))
-        for item in [item["email"] for item in self.new_worker_rows]: # Delete new users if added
+        for item in [item["email"] for item in self.new_worker_rows]:  # Delete new users if added
             self.workers_table.removeRow(self.workers_table.findItems(item, Qt.MatchContains)[0].row())
         self.new_worker_rows.clear()
 
@@ -381,11 +374,11 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
     def undo_changes_projects_table(self):
         self.project_rows_to_delete.clear()
         self.unpacked_project_rows_were_changed.clear()
-        self.projects_table.selectAll() # The selection of all elements, followed by painting in white
+        self.projects_table.selectAll()  # The selection of all elements, followed by painting in white
         for item in self.project_rows_were_changed:
             row_id = item.sibling(item.row(), 2).data()
             index = item.row()
-            for old_item in self.old_data_projects_rows: # Returning old data if editing
+            for old_item in self.old_data_projects_rows:  # Returning old data if editing
                 if old_item["_id"] == row_id:
                     self.projects_table.setItem(index, 0, QtWidgets.QTableWidgetItem(old_item["name"]))
                     self.projects_table.setItem(index, 1, QtWidgets.QTableWidgetItem(old_item["deadline"]))
@@ -395,7 +388,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         rows = self.projects_table.selectedItems()
         for x in rows:
             x.setBackground(QColor(255, 255, 255))
-        for item in [item["name"] for item in self.new_project_rows]: # Delete new users if added
+        for item in [item["name"] for item in self.new_project_rows]:  # Delete new users if added
             self.projects_table.removeRow(self.projects_table.findItems(item, Qt.MatchContains)[0].row())
         self.new_project_rows.clear()
 
@@ -426,15 +419,13 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         except KeyError:
             pass
 
-
     def settings_click(self):
         print("settings_click")
-
 
     # Updating data for the table of workers through the server
     def update_workers_table_click(self):
         self.update_workers()
-        
+
     # Data update for project table via server
     def update_projects_table_click(self):
         self.update_projects()
@@ -506,7 +497,7 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
             with open("memory.json") as f:
                 self.data = json.load(f)
         except IOError:
-            self.data = {"user_info":{"login": "", "pwd": ""}, "flag": False}
+            self.data = {"user_info": {"login": "", "pwd": ""}, "flag": False}
             with open("memory.json") as f:
                 self.data = json.load(f)
 
@@ -528,7 +519,6 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
         self._login_timer.start(10000)
         self.connect_status = 0
 
-
     def _timer_tick(self):
         self.connect_status = self.api.check_connect()
         if self.connect_status:
@@ -537,7 +527,6 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
         else:
             self.label_log_login.setText("Сервер недоступен!")
             self.button_status(False)
-
 
     def button_status(self, status):
         self.login_button.setEnabled(status)
@@ -555,7 +544,7 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
                 self.error_loginpwd.setText("Неверный логин или пароль!")
             elif flag:
                 with open("memory.json", "w") as f:
-                    f.write(json.dumps({"user_info":{"login": self.api.user, "pwd": self.api.pwd}, "flag": flag}))
+                    f.write(json.dumps({"user_info": {"login": self.api.user, "pwd": self.api.pwd}, "flag": flag}))
                 self._login_timer.stop()
                 self.miWindow = miWindow(self.api)
                 self.miWindow.last_window = self
@@ -577,11 +566,11 @@ class loginStackWindow(QtWidgets.QDialog, login_stack.Ui_login_dialog):
 
     # page_login(0) go to the user login change window
     def newpwd_button_click(self):
-        self.login_stack.setCurrentIndex(1) # page_replace_login
+        self.login_stack.setCurrentIndex(1)  # page_replace_login
 
     # page_replace_pwd(2) back button
     def back_login_button_click(self):
-        self.login_stack.setCurrentIndex(0) # page_login
+        self.login_stack.setCurrentIndex(0)  # page_login
 
     # page_replace_pwd(2) button user pwd changes
     def save_newpwd_button_click(self):
@@ -663,7 +652,6 @@ class newProjectDialogWindow(QtWidgets.QDialog, add_new_project_dialog.Ui_add_ne
         self._new_project_timer.start(10000)
         self.connect_status = 0
 
-
     def _timer_tick(self):
         self.connect_status = self.api.check_connect()
         if self.connect_status:
@@ -672,7 +660,6 @@ class newProjectDialogWindow(QtWidgets.QDialog, add_new_project_dialog.Ui_add_ne
         else:
             self.label_error.setText("Сервер недоступен!")
             self.button_status(False)
-
 
     def button_status(self, status):
         self.add_button.setEnabled(status)
@@ -710,7 +697,7 @@ class newProjectDialogWindow(QtWidgets.QDialog, add_new_project_dialog.Ui_add_ne
                     self.label_error.setText("Проект с таким наименованием уже существует!")
         else:
             self.label_error.setText("Сервер недоступен!")
-            return 
+            return
 
     # Cancel add
     def cancel_button_click(self):
@@ -739,7 +726,6 @@ class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user
         self._new_user_timer.start(10000)
         self.connect_status = 0
 
-
     def _timer_tick(self):
         self.connect_status = self.api.check_connect()
         if self.connect_status:
@@ -748,7 +734,6 @@ class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user
         else:
             self.label_error.setText("Сервер недоступен!")
             self.button_status(False)
-
 
     def button_status(self, status):
         self.add_button.setEnabled(status)
@@ -798,7 +783,7 @@ class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user
                     self.label_error.setText("Пользователь с таким Email уже существует!")
         else:
             self.label_error.setText("Сервер недоступен!")
-            return 
+            return
 
     # Cancel add
     def cancel_button_click(self):
@@ -806,12 +791,12 @@ class newUserDialogWindow(QtWidgets.QDialog, add_new_user_dialog.Ui_add_new_user
         self.close()
 
 
-
 def main():
     app = QtWidgets.QApplication(sys.argv)
     login_window = loginStackWindow()
     login_window.show()
     app.exec_()
+
 
 if __name__ == "__main__":
     main()
