@@ -2,12 +2,11 @@
 
 # Form implementation generated from reading ui file '.\ui\add_inproject_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.12
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_add_inproject_dialog(object):
     def setupUi(self, add_inproject_dialog):
@@ -75,8 +74,6 @@ class Ui_add_inproject_dialog(object):
         item.setText(_translate("add_inproject_dialog", "Срок сдачи"))
 
 
-
-
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -85,3 +82,4 @@ if __name__ == "__main__":
     ui.setupUi(add_inproject_dialog)
     add_inproject_dialog.show()
     sys.exit(app.exec_())
+

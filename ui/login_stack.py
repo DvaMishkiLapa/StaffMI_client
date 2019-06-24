@@ -2,12 +2,11 @@
 
 # Form implementation generated from reading ui file '.\ui\login_stack.ui'
 #
-# Created by: PyQt5 UI code generator 5.12
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_login_dialog(object):
     def setupUi(self, login_dialog):
@@ -372,8 +371,6 @@ class Ui_login_dialog(object):
         self.message_oldpwd.setText(_translate("login_dialog", "Введите ваш логин и текущий пароль"))
 
 
-
-
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -382,3 +379,4 @@ if __name__ == "__main__":
     ui.setupUi(login_dialog)
     login_dialog.show()
     sys.exit(app.exec_())
+

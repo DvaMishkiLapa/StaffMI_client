@@ -2,12 +2,11 @@
 
 # Form implementation generated from reading ui file '.\ui\add_new_user_dialog.ui'
 #
-# Created by: PyQt5 UI code generator 5.12
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_add_new_user_dialog(object):
     def setupUi(self, add_new_user_dialog):
@@ -156,8 +155,6 @@ class Ui_add_new_user_dialog(object):
         self.add_button.setText(_translate("add_new_user_dialog", "Добавить"))
 
 
-
-
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
@@ -166,3 +163,4 @@ if __name__ == "__main__":
     ui.setupUi(add_new_user_dialog)
     add_new_user_dialog.show()
     sys.exit(app.exec_())
+

@@ -27,7 +27,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>iconstitle.png</normaloff>iconstitle.png</iconset>
+    <normaloff>icons/title.png</normaloff>icons/title.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">font: 11pt &quot;Times New Roman&quot;;</string>

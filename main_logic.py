@@ -109,12 +109,12 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.update_data_2.setEnabled(status)
 
     def resizeEvent(self, event):
-        self.workers_table.setColumnWidth(0, self.width()/6)
-        self.workers_table.setColumnWidth(1, self.width()/12)
-        self.workers_table.setColumnWidth(2, self.width()/12)
-        self.workers_table.setColumnWidth(3, self.width()/12)
-        self.workers_table.setColumnWidth(4, self.width()/4)
-        self.projects_table.setColumnWidth(0, self.width()/1.5)
+        self.workers_table.setColumnWidth(0, self.width() / 6)
+        self.workers_table.setColumnWidth(1, self.width() / 12)
+        self.workers_table.setColumnWidth(2, self.width() / 12)
+        self.workers_table.setColumnWidth(3, self.width() / 12)
+        self.workers_table.setColumnWidth(4, self.width() / 4)
+        self.projects_table.setColumnWidth(0, self.width() / 1.5)
 
     # Update employee table
     def update_workers(self):
@@ -132,11 +132,11 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                 self.workers_table.insertRow(row_pos)
                 self.workers_table.setItem(row_pos, 0, QtWidgets.QTableWidgetItem(worker["email"]))
                 for x in range(1, 4):  # Parsing of the name of the employee
-                    self.workers_table.setItem(row_pos, x, QtWidgets.QTableWidgetItem(worker["name"][x-1]))
+                    self.workers_table.setItem(row_pos, x, QtWidgets.QTableWidgetItem(worker["name"][x - 1]))
                 self.workers_table.setItem(row_pos, 4, QtWidgets.QTableWidgetItem(worker["position"]))
                 self.workers_table.setItem(row_pos, 5, QtWidgets.QTableWidgetItem(worker["_id"]))
                 # Attempt to change the row id in the table
-            index_list = [str(item+1) for item in range(self.workers_table_page, self.workers_table_page + int(self.size_page.text()))]
+            index_list = [str(item + 1) for item in range(self.workers_table_page, self.workers_table_page + int(self.size_page.text()))]
             self.workers_table.setVerticalHeaderLabels(index_list)
         else:
             self.label_log_main.setText("Сервер недоступен!")
@@ -274,8 +274,8 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                 # [We need the best solution to find matches]
                 if item["name"] == name and item["deadline"] == row.sibling(row.row(), 1).data():
                     self.user_projects[self.clicked_worker_row].remove(item)
-        list_index_rows = sorted([i.row() for i in selected_rows]) # Creating a separated list of indices of selected lines
-        while len(list_index_rows): # Deleting rows from an employee"s project table
+        list_index_rows = sorted([i.row() for i in selected_rows])  # Creating a separated list of indices of selected lines
+        while len(list_index_rows):  # Deleting rows from an employee"s project table
             self.current_projects_table.removeRow(list_index_rows[-1])
             list_index_rows.pop()
         self.api.remove_from_projects(request)
@@ -358,7 +358,7 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                 if old_item["_id"] == row_id:
                     self.workers_table.setItem(index, 0, QtWidgets.QTableWidgetItem(old_item["email"]))
                     for x in range(1, 4):
-                        self.workers_table.setItem(index, x, QtWidgets.QTableWidgetItem(old_item["name"][x-1]))
+                        self.workers_table.setItem(index, x, QtWidgets.QTableWidgetItem(old_item["name"][x - 1]))
                     self.workers_table.setItem(index, 4, QtWidgets.QTableWidgetItem(old_item["position"]))
                     break
         self.worker_rows_were_changed.clear()

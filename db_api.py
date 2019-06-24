@@ -1,6 +1,6 @@
 import json
 import requests
-host = 'https://pms.kmm-vsu.ru/'
+host = 'https://pme.thesame.space/'
 
 
 class API:
