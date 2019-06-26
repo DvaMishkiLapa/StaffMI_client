@@ -67,6 +67,46 @@
     <property name="spacing">
      <number>2</number>
     </property>
+    <item row="1" column="0" colspan="2">
+     <widget class="Line" name="line_3">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QLabel" name="label_log_main">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>20</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>15</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 11pt &quot;Times New Roman&quot;;
+color: rgb(255, 0, 0);
+font-weight: bold;</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0" colspan="2">
      <widget class="QTabWidget" name="tabWidget">
       <property name="tabPosition">
@@ -358,32 +398,6 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="search_user">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>icons/search_user.png</normaloff>icons/search_user.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>45</width>
-                <height>45</height>
-               </size>
-              </property>
-              <property name="flat">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="Line" name="line">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Minimum">
@@ -479,32 +493,6 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="save_inprojects">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>icons/save_user_inproject.png</normaloff>icons/save_user_inproject.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>45</width>
-                <height>45</height>
-               </size>
-              </property>
-              <property name="flat">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
              <spacer name="horizontalSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -557,32 +545,6 @@
               <property name="icon">
                <iconset>
                 <normaloff>icons/update_data.png</normaloff>icons/update_data.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>45</width>
-                <height>45</height>
-               </size>
-              </property>
-              <property name="flat">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="settings">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>icons/settings.png</normaloff>icons/settings.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -1063,32 +1025,6 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="settings_2">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset>
-                <normaloff>icons/settings.png</normaloff>icons/settings.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>45</width>
-                <height>45</height>
-               </size>
-              </property>
-              <property name="flat">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QPushButton" name="logout_2">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -1145,51 +1081,6 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_3">
-       <attribute name="title">
-        <string>Задачи</string>
-       </attribute>
-      </widget>
-     </widget>
-    </item>
-    <item row="2" column="0" colspan="2">
-     <widget class="QLabel" name="label_log_main">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>20</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>15</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">font: 11pt &quot;Times New Roman&quot;;
-color: rgb(255, 0, 0);
-font-weight: bold;</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" colspan="2">
-     <widget class="Line" name="line_3">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
      </widget>
     </item>
    </layout>
@@ -1201,13 +1092,10 @@ font-weight: bold;</string>
   <tabstop>add_worker</tabstop>
   <tabstop>del_worker</tabstop>
   <tabstop>save_workers</tabstop>
-  <tabstop>search_user</tabstop>
   <tabstop>new_inproject</tabstop>
   <tabstop>del_inproject</tabstop>
-  <tabstop>save_inprojects</tabstop>
   <tabstop>undo_changes_workers</tabstop>
   <tabstop>update_data</tabstop>
-  <tabstop>settings</tabstop>
   <tabstop>logout</tabstop>
   <tabstop>full_left</tabstop>
   <tabstop>page_left</tabstop>
@@ -1222,7 +1110,6 @@ font-weight: bold;</string>
   <tabstop>save_projects</tabstop>
   <tabstop>undo_changes_projects</tabstop>
   <tabstop>update_data_2</tabstop>
-  <tabstop>settings_2</tabstop>
   <tabstop>logout_2</tabstop>
   <tabstop>projects_table</tabstop>
  </tabstops>

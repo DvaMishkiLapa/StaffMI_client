@@ -54,7 +54,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.new_inproject.clicked.connect(self.new_inproject_click)
         self.new_inproject.clicked.connect(self.current_projects_table.scrollToBottom)
         self.del_inproject.clicked.connect(self.del_inproject_click)
-        self.save_inprojects.clicked.connect(self.save_inprojects_click)
 
         # buttons events for projects table
         self.add_project.clicked.connect(self.add_project_click)
@@ -67,8 +66,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.undo_changes_projects.clicked.connect(self.undo_changes_projects_table)
         self.logout.clicked.connect(self.logout_click)
         self.logout_2.clicked.connect(self.logout_click)
-        self.settings.clicked.connect(self.settings_click)
-        self.settings_2.clicked.connect(self.settings_click)
         self.update_data.clicked.connect(self.update_workers_table_click)
         self.update_data_2.clicked.connect(self.update_projects_table_click)
 
@@ -102,7 +99,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
         self.save_workers.setEnabled(status)
         self.new_inproject.setEnabled(status)
         self.del_inproject.setEnabled(status)
-        self.save_inprojects.setEnabled(status)
         self.update_data.setEnabled(status)
         self.add_project.setEnabled(status)
         self.save_projects.setEnabled(status)
@@ -280,9 +276,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
             list_index_rows.pop()
         self.api.remove_from_projects(request)
 
-    def save_inprojects_click(self):
-        print("save_inprojects_click")
-
     # Call the project creation dialog
     def add_project_click(self):
         chose_dialog = newProjectDialogWindow(self.api, self.projects_table, self.new_project_rows)
@@ -418,9 +411,6 @@ class miWindow(QtWidgets.QMainWindow, main_window.Ui_MainWindow):
                 self.current_projects_table.setItem(row_pos, 1, QtWidgets.QTableWidgetItem(project["deadline"]))
         except KeyError:
             pass
-
-    def settings_click(self):
-        print("settings_click")
 
     # Updating data for the table of workers through the server
     def update_workers_table_click(self):
